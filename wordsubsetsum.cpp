@@ -21,7 +21,7 @@ bool isSubsetSum(int set[],int n, int t){
 	
 	//Create table
 	unsigned int table[elements][wordsneeded];
-	unsigned int c,i;
+	int c,i;
 	printf("elements = %u , wordsneeded = %u, w = %u\n",elements,wordsneeded,w);
 	//Initialize first row
 	for(i=0;i<wordsneeded;i++){
@@ -32,7 +32,7 @@ bool isSubsetSum(int set[],int n, int t){
 	printbits(table[0][0]);
 	printf("should be fine here...\n");
 	//Fill the table in bottom up manner
-	unsigned int es,ss,ai;
+	int es,ss,ai;
 	for(c=1;c<elements; c++){
 		ai = set[c-1];
 		printf("ai = %u\n",ai);
@@ -62,15 +62,15 @@ bool isSubsetSum(int set[],int n, int t){
 		}
 	}
 	
-	
+	printf("TABLE\n");
 	for (int i = 0; i < elements; i++)
      {
        for (int j = 0; j < wordsneeded; j++)
-          printf ("%u", table[i][j]);
+          printbits(table[i][j]);
        printf("\n");
      } 
      
-     if((table[elements-1][wordsneeded-1]>>ss)&1 ==1){
+     if((table[elements-1][wordsneeded-1]>>(w-t-1))&1 ==1){
 		 return true;
 	 }return false;
 }
