@@ -1,18 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h> 
+#include "ultraword.h"
 
-/* function to print the bits of an int */
-void printbits(unsigned int n){
-	int i;
-	for(i=sizeof(int)*8-1;i>=0;i--){
-		unsigned int mask = 1<<i;
-		unsigned int maskedn = n&mask;
-		unsigned int thebit = maskedn >> i;
-		printf("%u",thebit);
-	}
-	printf("\n");
-}
 /* Returns true if there is a subset of set[] with sum equal to t */
 bool isSubsetSum(int set[],int n, int t){
 	unsigned int w = sizeof(int)*8;  //for regular word.
