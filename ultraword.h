@@ -106,18 +106,19 @@ class UltraWord{
 				{
 
 					this->blocks[0] = assg;
-		}
-		/* Equals. checks all blocks are the same bitwise */
-		bool operator==(const UltraWord& u){
-			int i;
-			bool res = true;
-			for(i = 0; i<NUM_BLOCKS; i++){
-				if(this->blocks[0] != u.blocks[i]){
-					return false;
 				}
-			}
-			return true;
-		}
+				
+				/* Equals. checks all blocks are the same bitwise */
+				bool operator==(const UltraWord& u){
+					int i;
+					bool res = true;
+					for(i = 0; i<NUM_BLOCKS; i++){
+						if(this->blocks[i] != u.blocks[i]){
+							return false;
+						}
+					}
+					return true;
+				}
 
 };
 

@@ -112,7 +112,7 @@ class UltraWord{
 			int i;
 			bool res = true;
 			for(i = 0; i<NUM_BLOCKS; i++){
-				if(this->blocks[0] != u.blocks[i]){
+				if(this->blocks[i] != u.blocks[i]){
 					return false;
 				}
 			}

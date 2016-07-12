@@ -5,7 +5,7 @@
 
 /* Returns true if there is a subset of set[] with sum equal to t */
 bool isSubsetSum(int set[],int n, int t){
-	unsigned int w = sizeof(UltraWord);  //ultra wide word
+	unsigned int w = UltraWord::WORD_SIZE;  //ultra wide word
 	unsigned int wordsneeded = ceil(double(t+1)/w);
 	unsigned int elements = n+1;
 
@@ -53,11 +53,31 @@ bool isSubsetSum(int set[],int n, int t){
 
 
      //not working
+     
+    //printf("RESULT CALC\n");
 	UltraWord one;
+	one.setzeros();
 	one =1;
+	
 	UltraWord preres;
-	preres = (table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1))&(one.nbrs(w*(wordsneeded-1)-1));
-    if(preres ==one){
+	preres = table[elements-1][wordsneeded-1].blocks[wordsneeded-1];
+	int shiftnum = (w*wordsneeded)-t-1;
+	//printf("shiftno =%d\n",shiftnum);
+	int x = floor((t%w)/UltraWord::BLOCK_SIZE); //x = the block number to get.
+	//printf("int x =%d\n",x);
+	preres = preres.blocks[x];
+	//printf("PRERES \n");
+	//preres.print();
+	preres = preres>>shiftnum;
+	//printf("PRERES AFTER SHIFT\n");
+	//preres.print();
+	preres = preres&one;
+	//printf("PRERES AFTER AND\n");
+	//preres.print();
+	//printf("ONE\n");
+	//one.print();
+	//printf("PRERES ==1  %d\n",preres==one);
+    if(preres == one){
 		 return true;
 	 }return false;
 }
@@ -65,11 +85,11 @@ bool isSubsetSum(int set[],int n, int t){
 
 
 int main(){
-	//int set[] = {81,80,43,40,30,26,12,11,9};
-	//int sum = 63;
+	int set[] = {81,80,43,40,30,26,12,11,9};
+	int sum = 63;
 
-	int set[] = {1,2,3,4};
-	int sum = 10;
+	//int set[] = {1,2,3,4};
+	//int sum = 10;
 
 
 	int n = sizeof(set)/sizeof(set[0]);
