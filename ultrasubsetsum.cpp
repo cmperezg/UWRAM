@@ -1,55 +1,63 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h> 
+#include <math.h>
 #include "ultraword.h"
 
 /* Returns true if there is a subset of set[] with sum equal to t */
 bool isSubsetSum(int set[],int n, int t){
-	unsigned int w = sizeof(int)*8;  //for regular word.
+	unsigned int w = sizeof(UltraWord);  //ultra wide word
 	unsigned int wordsneeded = ceil(double(t+1)/w);
 	unsigned int elements = n+1;
-	
+
 	//Create table
-	unsigned int table[elements][wordsneeded];
+	UltraWord table[elements][wordsneeded];
 	int c,i;
 	//Initialize first row
 	for(i=0;i<wordsneeded;i++){
-		table[0][i] = 0;
+		table[0][i].setzeros();
 	}
-	table[0][0] = 1<<(w-1);
+	table[0][0] = 1<<(UltraWord::BLOCK_SIZE-1);
 	//Fill the table in bottom up manner
 	int es,ss,ai;
 	for(c=1;c<elements; c++){
 		ai = set[c-1];
 		es = floor(ai/w);
 		ss = ai%w;
-		unsigned int n = 0; //word
-		unsigned int aun = 0; //auxiliary word
+		UltraWord n; //word
+		n.setzeros();
+		UltraWord aun; //auxiliary word
+		aun.setzeros();
 		for(i=0;i<wordsneeded;i++){
 			n = table[c-1][i];
 			if(ai<w){
-				aun = table[c-1][i]>>ai;
+				aun = table[c-1][i].nbrs(ai);
 				n = n|aun;
 			}else if(i-es >= 0){
-				aun = table[c-1][i-es]>>ss;
+				aun = table[c-1][i-es].nbrs(ss);
 				n = n|aun;
 			}if(i-es-1 >= 0){
-				aun = table[c-1][i-es-1]<<(w-ss);
+				aun = table[c-1][i-es-1].nbls(w-ss);
 				n = n|aun;
 			}
 			table[c][i] = n;
 		}
 	}
-	
+
 	printf("TABLE\n");
 	for (int i = 0; i < elements; i++)
      {
        for (int j = 0; j < wordsneeded; j++)
-          printbits(table[i][j]);
+          table[i][j].print();
        printf("\n");
-     } 
-     
-     if((table[elements-1][wordsneeded-1]>>(w-t-1))&1 ==1){
+     }
+
+
+     //not working
+	UltraWord one;
+	one =1;
+	UltraWord preres;
+	preres = (table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1))&(one.nbrs(w*(wordsneeded-1)-1));
+    if(preres ==one){
 		 return true;
 	 }return false;
 }
@@ -57,8 +65,12 @@ bool isSubsetSum(int set[],int n, int t){
 
 
 int main(){
-	int set[] = {81,80,43,40,30,26,12,11,9};
-	int sum = 63;
+	//int set[] = {81,80,43,40,30,26,12,11,9};
+	//int sum = 63;
+
+	int set[] = {1,2,3,4};
+	int sum = 10;
+
 
 	int n = sizeof(set)/sizeof(set[0]);
 	if (isSubsetSum(set,n,sum) == true)

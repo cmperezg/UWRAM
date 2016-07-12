@@ -2,43 +2,49 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SIZE_OF_INT  4 
+/*#define SIZE_OF_INT  4
 #define SIZE_OF_BYTE  8
 #define NUM_BLOCKS  32
 #define BLOCK_SIZE  SIZE_OF_INT * SIZE_OF_BYTE
+#define WORD_SIZE  NUM_BLOCKS * BLOCK_SIZE*/
 
 class UltraWord{
-	
-	unsigned int blocks[NUM_BLOCKS];
-	
-	public: 
+
+	public:
+
+		static int SIZE_OF_INT;
+		static int SIZE_OF_BYTE;
+		static int NUM_BLOCKS;
+		static int BLOCK_SIZE;
+		static int WORD_SIZE;
+
+		unsigned int blocks[32];
+
 		void print();
 		void randomfill();
 		void setzeros();
 		void printbits(unsigned int n);
-		
+
 		UltraWord compress();
 		UltraWord spread();
 		UltraWord nbrs(int x);
 		UltraWord nbls(int x);
-	
+
 		/* OPERATOR OVERLOADING */
-		
-		UltraWord operator&(const UltraWord& u)
-		{
+
+		UltraWord operator&(const UltraWord& u){
 			UltraWord word;
-			
+
 			int i;
 			for(i = 0; i<NUM_BLOCKS; i++){
 				word.blocks[i] = this->blocks[i] & u.blocks[i];
 			}
 			return word;
 		}
-		
-		UltraWord operator|(const UltraWord& u)
-		{
+
+		UltraWord operator|(const UltraWord& u){
 			UltraWord word;
-			
+
 			int i;
 			for(i = 0; i<NUM_BLOCKS; i++){
 				word.blocks[i] = this->blocks[i] | u.blocks[i];
@@ -46,52 +52,80 @@ class UltraWord{
 			return word;
 		}
 		/*Shifts every block separately*/
-		UltraWord operator<<(unsigned int shift)
-		{
+		UltraWord operator<<(unsigned int shift){
 			UltraWord word;
-			
+
 			int i;
 			for(i = 0; i<NUM_BLOCKS; i++){
 				word.blocks[i] = this->blocks[i]<<shift;
 			}
 			return word;
 		}
-		
+
 		/*Shifts every block separately*/
-		UltraWord operator>>(unsigned int shift)
-		{
+		UltraWord operator>>(unsigned int shift){
 			UltraWord word;
-			
+
 			int i;
 			for(i = 0; i<NUM_BLOCKS; i++){
 				word.blocks[i] = this->blocks[i]>>shift;
 			}
 			return word;
 		}
-		
-		UltraWord operator+(const UltraWord& u)
-		{
+
+		UltraWord operator+(const UltraWord& u){
 			UltraWord word;
-			
+
 			int i;
 			for(i = 0; i<NUM_BLOCKS; i++){
 				word.blocks[i] = this->blocks[i] + u.blocks[i];
 			}
 			return word;
 		}
-		
-		UltraWord operator-(const UltraWord& u)
-		{
+
+		UltraWord operator-(const UltraWord& u){
 			UltraWord word;
-			
+
 			int i;
 			for(i = 0; i<NUM_BLOCKS; i++){
 				word.blocks[i] = this->blocks[i] - u.blocks[i];
 			}
 			return word;
 		}
-		
+
+		/* copy */
+		void operator=(const UltraWord& u){
+			int i;
+			for(i = 0; i<NUM_BLOCKS; i++){
+				this->blocks[i] = u.blocks[i];
+			}
+		}
+
+		/* Assign int to first block of a word */
+		void operator=(unsigned int assg){
+
+			this->blocks[0] = assg;
+		}
+
+		/* Equals. checks all blocks are the same bitwise */
+		bool operator==(const UltraWord& u){
+			int i;
+			bool res = true;
+			for(i = 0; i<NUM_BLOCKS; i++){
+				if(this->blocks[0] != u.blocks[i]){
+					return false;
+				}
+			}
+			return true;
+		}
+
 };
+
+int UltraWord::SIZE_OF_INT = 4;
+int UltraWord::SIZE_OF_BYTE = 8;
+int UltraWord::NUM_BLOCKS = 32;
+int UltraWord::BLOCK_SIZE = SIZE_OF_INT * SIZE_OF_BYTE;
+int UltraWord::WORD_SIZE = BLOCK_SIZE * NUM_BLOCKS;
 
 /* OTHER ULTRAWORD FUNCTIONS */
 UltraWord UltraWord::compress(){
@@ -180,7 +214,7 @@ UltraWord UltraWord::nbls(int x){
 	shifted.blocks[0] = (this->blocks[0]<<x)| au;
 	return shifted;
 }
-	
+
 /* ULTRAWORD UTILITIES */
 /* function to print the bits of an int */
 void UltraWord::printbits(unsigned int n){
@@ -202,7 +236,7 @@ void UltraWord::print(){
 		printbits(this->blocks[i]);
 	}
 }
-		
+
 /* fills word with random numbers */
 void UltraWord::randomfill(){
 	int i;
@@ -212,7 +246,7 @@ void UltraWord::randomfill(){
 		this->blocks[i] = ran;
 	}
 }
-	
+
 /* fills word with zeros */
 void UltraWord::setzeros(){
 	int i;
@@ -220,24 +254,28 @@ void UltraWord::setzeros(){
 		this->blocks[i] = 0;
 	}
 }
-	
+/*
 int main(void){
 	time_t t;
     srand((unsigned) time(&t));
-    
-    UltraWord w1;
-    //UltraWord w2;
-    
-    w1.randomfill();
-    //w2.randomfill();
-    
-    w1.print();
-    //w2.print();
-    
-    UltraWord res = w1.nbls(3);
-    res.print();
 
-   
-}	
-	
-	
+    UltraWord w1;
+    UltraWord w2;
+
+    w1.randomfill();
+    w2.randomfill();
+
+    w1.print();
+    w2.print();
+
+    UltraWord sum = w1+w2;
+
+    sum.print();
+
+    //UltraWord res = w1.nbls(3);
+    //res.print();
+
+
+}
+*/
+

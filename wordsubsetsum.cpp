@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h> 
+#include <math.h>
 
 /* function to print the bits of an int */
 void printbits(unsigned int n){
@@ -18,7 +18,7 @@ bool isSubsetSum(int set[],int n, int t){
 	unsigned int w = sizeof(int)*8;  //for regular word.
 	unsigned int wordsneeded = ceil(double(t+1)/w);
 	unsigned int elements = n+1;
-	
+
 	//Create table
 	unsigned int table[elements][wordsneeded];
 	int c,i;
@@ -50,16 +50,17 @@ bool isSubsetSum(int set[],int n, int t){
 			table[c][i] = n;
 		}
 	}
-	
+
 	printf("TABLE\n");
 	for (int i = 0; i < elements; i++)
      {
        for (int j = 0; j < wordsneeded; j++)
           printbits(table[i][j]);
        printf("\n");
-     } 
-     
-     if((table[elements-1][wordsneeded-1]>>(w-t-1))&1 ==1){
+     }
+
+     //if((table[elements-1][wordsneeded-1]>>(w-t-1))&1 ==1){
+	if((table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1))&1 ==1){
 		 return true;
 	 }return false;
 }
@@ -69,6 +70,9 @@ bool isSubsetSum(int set[],int n, int t){
 int main(){
 	int set[] = {81,80,43,40,30,26,12,11,9};
 	int sum = 63;
+
+	//int set[] = {1,2,3,4};
+	//int sum = 10;
 
 	int n = sizeof(set)/sizeof(set[0]);
 	if (isSubsetSum(set,n,sum) == true)
