@@ -72,10 +72,10 @@ bool isSubsetSum(int set[],int n, int t){
 	//printf("PRERES AFTER SHIFT\n");
 	//preres.print();
 	preres = preres&one;
-	//printf("PRERES AFTER AND\n");
-	//preres.print();
-	//printf("ONE\n");
-	//one.print();
+	printf("PRERES AFTER AND\n");
+	preres.print();
+	printf("ONE\n");
+	one.print();
 	//printf("PRERES ==1  %d\n",preres==one);
     if(preres == one){
 		 return true;
