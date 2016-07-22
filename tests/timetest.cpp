@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+//g++ timetest.cpp -o timetest -std=c++11
 
 void func(){
 	//count lots

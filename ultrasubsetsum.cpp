@@ -30,13 +30,13 @@ bool isSubsetSum(int set[],int n, int t){
 		for(i=0;i<wordsneeded;i++){
 			n = table[c-1][i];
 			if(ai<w){
-				aun = table[c-1][i].nbrs(ai);
+				aun = table[c-1][i]>>ai;
 				n = n|aun;
 			}else if(i-es >= 0){
-				aun = table[c-1][i-es].nbrs(ss);
+				aun = table[c-1][i-es]>>ss;
 				n = n|aun;
 			}if(i-es-1 >= 0){
-				aun = table[c-1][i-es-1].nbls(w-ss);
+				aun = table[c-1][i-es-1]<<(w-ss);
 				n = n|aun;
 			}
 			table[c][i] = n;
@@ -52,7 +52,6 @@ bool isSubsetSum(int set[],int n, int t){
      }
 
 
-     //not working
      
     //printf("RESULT CALC\n");
 	UltraWord one;
@@ -68,7 +67,7 @@ bool isSubsetSum(int set[],int n, int t){
 	preres = preres.blocks[x];
 	//printf("PRERES \n");
 	//preres.print();
-	preres = preres>>shiftnum;
+	preres = preres.brs(shiftnum);
 	//printf("PRERES AFTER SHIFT\n");
 	//preres.print();
 	preres = preres&one;
