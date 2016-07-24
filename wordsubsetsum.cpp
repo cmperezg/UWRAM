@@ -18,12 +18,13 @@ void printbits(unsigned int n){
 unsigned int getbit(unsigned int num, int bitno){
 	
 	unsigned int w = sizeof(int)*8;  //for regular word.
-	int shiftno = w-bitno;
-	
+	int shiftno = w-bitno-1;
+	//printbits(num);
+    //printf("shiftno = %d\n",shiftno);
 	unsigned int mask = 1<<shiftno;
 	unsigned int maskedn = num&mask;
 	unsigned int thebit = maskedn>>shiftno;
-	
+	//printbits(thebit);
 	return thebit;
 }
 
@@ -54,7 +55,7 @@ void printsubset(unsigned int table[][], int t, int elem){
 bool isSubsetSum(int set[],int n, int t){
 	unsigned int w = sizeof(int)*8;  //for regular word.
 	unsigned int wordsneeded = ceil(double(t+1)/w);
-	unsigned int elements = n+1;
+	unsigned int elements = n;
 
 	//Create table
 	unsigned int table[elements][wordsneeded];
@@ -66,7 +67,7 @@ bool isSubsetSum(int set[],int n, int t){
 	table[0][0] = 1<<(w-1);
 	//Fill the table in bottom up manner
 	int es,ss,ai;
-	for(c=1;c<elements; c++){
+	for(c=1;c<=elements; c++){
 		ai = set[c-1];
 		es = floor(ai/w);
 		ss = ai%w;
@@ -89,65 +90,68 @@ bool isSubsetSum(int set[],int n, int t){
 	}
 
 	printf("TABLE\n");
-	for (int i = 0; i < elements; i++)
+	for (int i = 0; i <= elements; i++)
      {
        for (int j = 0; j < wordsneeded; j++)
           printbits(table[i][j]);
        printf("\n");
      }
 
-     //if((table[elements-1][wordsneeded-1]>>(w-t-1))&1 ==1){
+     
 	if((table[elements][wordsneeded-1]>>((w*wordsneeded)-t-1))&1 ==1){
-		//printsubset(table,t,elements);
+
 		
+		
+		///*
 		//Uncomment this code to print subset
-		/*
-		printf("Subset: \n");
-		//unsigned int w = sizeof(int)*8; 
-		int s = t; //sum left to account for
-		int bwr = (w*wordsneeded)-t-1; // bit with result (0 indexing)
-		int wwr = wordsneeded -1; //0 indexing
-		int currrow = elements;
-		while(s>0){
-			bool topisone = true;
-			
-			//get last element 
-			while(topisone && currrow>0){
-				topisone = (getbit(table[currrow-1][wwr],bwr) == 1);
-				if(topisone){
-					currrow --;
-					bwr = bwr - set[currrow];
-				}
-			}
-			printf("%d , " ,set[currrow]);
-		}*/
 		int s = t;
 		int currrow = elements;
-		int bwr = (w*wordsneeded)-t-1; // bit with result (0 indexing)
+		int bwr =  t;//(w*wordsneeded)-t-1; // bit with result (0 indexing)
 		int wwr = wordsneeded -1; //0 indexing
 		bool topisone;
-		topisone = (getbit(table[currrow-1][wwr],bwr) == 1);
-		printf("s = %d, currrow = %d, topisone = %d \n",s,currrow,topisone);
-		currrow--;
-		topisone = (getbit(table[currrow-1][wwr],bwr) == 1);
-		printf("s = %d, currrow = %d, topisone = %d \n",s,currrow,topisone);
-		
+		bool jobdone = false;
+		printf("Subset: \n");
+		while(!jobdone){
+			topisone = (getbit(table[currrow-1][wwr],bwr) == 1);
+			//printf("s = %d, currrow = %d, bwr = %d, topisone = %d \n",s,currrow,bwr,topisone);
+			if(topisone){
+					currrow --;
+			}else{
+				if(wwr==0 || set[currrow-1]<=bwr){
+					bwr = bwr - set[currrow-1];
+					printf("%d , " ,set[currrow-1]);
+					if(bwr <= 0){
+						jobdone = true;
+					}
+				}else if(set[currrow-1]>bwr){
+					bwr = (set[currrow -1]-bwr)%w;
+					wwr = wwr - ceil(set[currrow-1]/w);
+					printf("%d , " ,set[currrow-1]);
+					if(bwr <= 0){
+						jobdone = true;
+					}
+				}
+				//currrow--;
+				
+			}
+		}//*/
+
 		 return true;
 	 }return false;
 }
 
 
 int main(){
-	//int set[] = {81,80,43,40,30,26,12,11,9};
-	//int sum = 63;
+	int set[] = {81,80,43,40,30,26,12,11,9};
+	int sum = 63;
 
-	int set[] = {3,34,4,12,5};
-	int sum = 9;
+	//int set[] = {3,34,4,12,5,2};
+	//int sum = 9;
 
 	int n = sizeof(set)/sizeof(set[0]);
 	if (isSubsetSum(set,n,sum) == true)
-     printf("Found a subset with given sum\n");
+     printf("\nFound a subset with given sum\n");
   else
-     printf("No subset with given sum\n");
+     printf("\nNo subset with given sum\n");
   return 0;
 }
