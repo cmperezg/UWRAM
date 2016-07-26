@@ -3,6 +3,23 @@
 #include <math.h>
 #include "ultraword.h"
 
+//compile: g++ ultrasubsetsum.cpp ultraword.cpp -o ultrasubsetsum
+
+
+// get bit #bitno from num. 0 is most significant.
+unsigned int getbit(UltraWord num, int bitno){
+	unsigned int w = UltraWord::WORD_SIZE;
+	int shiftno = w-bitno-1;
+	UltraWord mask;
+	mask.setzeros();
+	mask = 1;
+	mask=mask<<shiftno;
+	UltraWord maskedn = num&mask;
+	UltraWord thebit = maskedn>>shiftno;
+	return thebit.blocks[UltraWord::NUM_BLOCKS-1];
+	
+}
+
 /* Returns true if there is a subset of set[] with sum equal to t */
 bool isSubsetSum(int set[],int n, int t){
 	unsigned int w = UltraWord::WORD_SIZE;  //ultra wide word
@@ -16,7 +33,11 @@ bool isSubsetSum(int set[],int n, int t){
 	for(i=0;i<wordsneeded;i++){
 		table[0][i].setzeros();
 	}
-	table[0][0] = 1<<(UltraWord::BLOCK_SIZE-1);
+	table[0][0] = 1;
+	//table[0][0].print();
+	table[0][0] = table[0][0]<<(w-1);
+	//printf("TOPONE w = %d\n",w);
+	//table[0][0].print();
 	//Fill the table in bottom up manner
 	int es,ss,ai;
 	for(c=1;c<elements; c++){
@@ -53,32 +74,50 @@ bool isSubsetSum(int set[],int n, int t){
 
 
      
-    //printf("RESULT CALC\n");
 	UltraWord one;
 	one.setzeros();
 	one =1;
+	//printf("table[%d][%d] \n",elements,wordsneeded-1);
+	//printf("(w*wordsneeded)-t-1) = %d\n",(w*wordsneeded)-t-1);
+	//UltraWord aux = (table[elements][wordsneeded-1]>>((w*wordsneeded)-t-1));
+	UltraWord aux = (table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1));
+	//aux.print();
+	//one.print();
+	//(aux&one).print();
+	//(table[elements][wordsneeded-1]>>100).print();
+	if((aux&one)==one){
+		//Uncomment this code to print subset
+		int currrow = elements;
+		int bwr = t%w;
+		int wwr = wordsneeded-1;
+		bool topisone;
+		bool jobdone = false;
+		printf("Subset: \n");
+		while(!jobdone){
+			topisone = (getbit(table[currrow-1][wwr],bwr) == 1);
+			if(topisone){
+				currrow--;
+			}else{
+				if(wwr==0 || set[currrow-1]<=bwr){
+					bwr = bwr - set[currrow-1];
+					printf("%d  " ,set[currrow-1]);
+					if(bwr <= 0){
+						jobdone = true;
+					}
+				}else if(set[currrow-1]>bwr){
+					bwr = (set[currrow -1]-bwr)%w;
+					wwr = wwr - ceil(set[currrow-1]/w);
+					printf("%d , " ,set[currrow-1]);
+					if(bwr <= 0){
+						jobdone = true;
+					}
+				}
+			}
+		}
+		return true;
+	}return false;
 	
-	UltraWord preres;
-	preres = table[elements-1][wordsneeded-1].blocks[wordsneeded-1];
-	int shiftnum = (w*wordsneeded)-t-1;
-	//printf("shiftno =%d\n",shiftnum);
-	int x = floor((t%w)/UltraWord::BLOCK_SIZE); //x = the block number to get.
-	//printf("int x =%d\n",x);
-	preres = preres.blocks[x];
-	//printf("PRERES \n");
-	//preres.print();
-	preres = preres.brs(shiftnum);
-	//printf("PRERES AFTER SHIFT\n");
-	//preres.print();
-	preres = preres&one;
-	printf("PRERES AFTER AND\n");
-	preres.print();
-	printf("ONE\n");
-	one.print();
-	//printf("PRERES ==1  %d\n",preres==one);
-    if(preres == one){
-		 return true;
-	 }return false;
+
 }
 
 

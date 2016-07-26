@@ -20,7 +20,7 @@ class UltraWord{
 		UltraWord compress();
 		UltraWord spread();
 
-		/* No boundary shifts*/
+		/* boundary shifts*/
 		UltraWord brs(int x);
 		UltraWord bls(int x);
 
@@ -52,61 +52,44 @@ class UltraWord{
 		/*No boundary left shift*/
 		UltraWord operator<<(unsigned int x){
 			UltraWord shifted;
-			unsigned int au = 0;
-			unsigned int au2 = 0;
-			unsigned int m = 0;
-			unsigned int aushift = BLOCK_SIZE - x;
-			int c;
-			/* create mask */
-			for(c = 0; c<x; c++){
-				m = (m<<1)|1;
+			shifted.setzeros();
+			unsigned int aux1 = 0;
+			unsigned int aux2 = 0;
+			
+			int bts = floor(x/BLOCK_SIZE);
+			int split = x%BLOCK_SIZE;
+			int i = bts;
+			int j = 0;
+			while(i<NUM_BLOCKS){
+				aux1 = this->blocks[i]<<split;
+				if((i+1)<NUM_BLOCKS){
+					aux2=this->blocks[i+1]>>(BLOCK_SIZE-split);
+				}else{
+					aux2 = 0;
+				}
+				shifted.blocks[j] = aux1|aux2;
+				j++;i++;
 			}
-			m = m<<aushift;
-			/* first block special case */
-			au = blocks[NUM_BLOCKS-1]&m;
-			au = au<<aushift;
-			shifted.blocks[NUM_BLOCKS-1] = this->blocks[NUM_BLOCKS-1]>>x;
-			/* middle blocks */
-			for(c=NUM_BLOCKS-1; c>0; c--){
-				au2 = this->blocks[c]&m;
-				au2 = au2>>aushift;
-				shifted.blocks[c] = this->blocks[c]<<x;
-				shifted.blocks[c] = shifted.blocks[c]|au;
-				au = au2;
-			}
-			/* last block special case */
-			shifted.blocks[0] = (this->blocks[0]<<x)| au;
 			return shifted;
 		}
-		
-		
 
 		/* No boundary right shift */
 		UltraWord operator>>(unsigned int x){
 			UltraWord shifted;
-			unsigned int au = 0;
-			unsigned int au2 = 0;
-			unsigned int m = 0;
-			unsigned int aushift = BLOCK_SIZE - x;
-			int c;
-			/* create mask */
-			for(c = 0; c<x; c++){
-				m = (m<<1)|1;
+			shifted.setzeros();
+			unsigned int aux1 = 0;
+			unsigned int aux2 = 0;
+			
+			int bts = floor(x/BLOCK_SIZE);
+			int split = x%BLOCK_SIZE;
+			int i = bts;
+			int j = 0;
+			while(i<NUM_BLOCKS){
+				aux1 = this->blocks[j]>>split;
+				shifted.blocks[i] = aux1|aux2;
+				aux2 = this->blocks[j]<<(BLOCK_SIZE-split);
+				i++;j++;
 			}
-			/* first block special case */
-			au = blocks[0]&m;
-			au = au<<aushift;
-			shifted.blocks[0] = this->blocks[0]>>x;
-			/* middle blocks */
-			for(c=1; c<NUM_BLOCKS-1; c++){
-				au2 = this->blocks[c]&m;
-				au2 = au2<<aushift;
-				shifted.blocks[c] = this->blocks[c]>>x;
-				shifted.blocks[c] = shifted.blocks[c]|au;
-				au = au2;
-			}
-			/* last block special case */
-			shifted.blocks[NUM_BLOCKS-1] = (this->blocks[NUM_BLOCKS-1]>>x)| au;
 			return shifted;
 		}
 		
@@ -142,9 +125,10 @@ class UltraWord{
 			}
 		}
 
-		void operator=(unsigned int assg)
-		{
-			this->blocks[0] = assg;
+		/* Assign int to last block of a word */
+		void operator=(unsigned int assg){
+
+			this->blocks[NUM_BLOCKS-1] = assg;
 		}
 				
 		/* Equals. checks all blocks are the same bitwise */
