@@ -34,10 +34,7 @@ bool isSubsetSum(int set[],int n, int t){
 		table[0][i].setzeros();
 	}
 	table[0][0] = 1;
-	//table[0][0].print();
 	table[0][0] = table[0][0]<<(w-1);
-	//printf("TOPONE w = %d\n",w);
-	//table[0][0].print();
 	//Fill the table in bottom up manner
 	int es,ss,ai;
 	for(c=1;c<elements; c++){
@@ -63,7 +60,8 @@ bool isSubsetSum(int set[],int n, int t){
 			table[c][i] = n;
 		}
 	}
-
+/*
+	//UNCOMMENT THIS CODE TO PRINT TABLE
 	printf("TABLE\n");
 	for (int i = 0; i < elements; i++)
      {
@@ -72,19 +70,12 @@ bool isSubsetSum(int set[],int n, int t){
        printf("\n");
      }
 
-
+*/
      
 	UltraWord one;
 	one.setzeros();
 	one =1;
-	//printf("table[%d][%d] \n",elements,wordsneeded-1);
-	//printf("(w*wordsneeded)-t-1) = %d\n",(w*wordsneeded)-t-1);
-	//UltraWord aux = (table[elements][wordsneeded-1]>>((w*wordsneeded)-t-1));
 	UltraWord aux = (table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1));
-	//aux.print();
-	//one.print();
-	//(aux&one).print();
-	//(table[elements][wordsneeded-1]>>100).print();
 	if((aux&one)==one){
 		//Uncomment this code to print subset
 		int currrow = elements;
@@ -123,8 +114,31 @@ bool isSubsetSum(int set[],int n, int t){
 
 
 int main(){
-	int set[] = {81,80,43,40,30,26,12,11,9};
-	int sum = 63;
+	int set[] = {518533,
+	 1037066,
+     2074132,
+     1648264,
+      796528,
+     1593056,
+      686112,
+     1372224,
+      244448,
+      488896,
+      977792,
+     1955584,
+     1411168,
+      322336,
+      644672,
+     1289344,
+       78688,
+      157376,
+      314752,
+      629504,
+     1259008};
+     int sum = 2463098;
+	
+	//int set[] = {81,80,43,40,30,26,12,11,9};
+	//int sum = 63;
 
 	//int set[] = {1,2,3,4};
 	//int sum = 10;
