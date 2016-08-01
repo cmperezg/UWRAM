@@ -104,35 +104,11 @@ bool isSubsetSum(int set[],int n, int t){
 	table[0][0] = 1<<(w-1);
 	//Fill the table in bottom up manner
 	int es,ss,ai;
-	//unsigned int[wordsneeded] aux1;
-		//unsigned int[wordsneeded] aux2;
 	for(c=1;c<=elements; c++){
-		/*
-		ai = set[c-1];
-		es = floor(ai/w);
-		ss = ai%w;
-		printf("ai=%d , es=%d, ss=%d\n",ai,es,ss);
-		unsigned int n = 0; //word
-		unsigned int aun = 0; //auxiliary word
-		for(i=0;i<=wordsneeded;i++){
-			printf("table[%d][%d]\n",c-1,i);
-			n = table[c-1][i];
-			if(ai<w){
-				aun = table[c-1][i]>>ai;
-				n = n|aun;
-			}else if(i-es >= 0){
-				aun = table[c-1][i-es]>>ss;
-				n = n|aun;
-			}if(i-es-1 >= 0){
-				aun = table[c-1][i-es-1]<<(w-ss);
-				n = n|aun;
-			}
 
-			table[c][i] = n;
-		}*/
 		printf("c = %d",c);
+		
 		unsigned int *aux = nbars(table[c-1],set[c-1]);
-		//for(i=0;i<
 		for(i=0;i<wordsneeded;i++){
 			table[c][i] = table[c-1][i]|aux[i];
 		}
@@ -161,7 +137,7 @@ bool isSubsetSum(int set[],int n, int t){
 		//Uncomment this code to print subset
 		int s = t;
 		int currrow = elements;
-		int bwr =  t%w;//(w*wordsneeded)-t-1; // bit with result (0 indexing)
+		int bwr =  t%w; // bit with result (0 indexing)
 		int wwr = wordsneeded -1; //0 indexing
 		bool topisone;
 		bool jobdone = false;
