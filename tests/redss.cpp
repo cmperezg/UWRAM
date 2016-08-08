@@ -102,31 +102,40 @@ void printbits(unsigned int n){
 			bool topisone;
 			bool jobdone = false;
 			printf("Subset: \n");
-			printf("wwr: %d , bwr: %d\n",wwr,bwr);
+			//printf("wwr: %d , bwr: %d\n",wwr,bwr);
+			//printf("currow = %d\n",currow);
 			while((!jobdone)&currow>0){
-				printf("enter loop. currow = %d\n",currow);
+				//printf("enter loop. currow = %d\n",currow);
 				topisone = getbit(table.at(currow-1).at(wwr),bwr)==1;
 				if(topisone){
+					printf("\n");
 					printf("topisone\n");
 					printf("I1 wwr: %d , bwr: %d\n",wwr,bwr);
+					printf("currow = %d\n",currow);
 					currow--;
 				}else{
+					printf("\n");
 					printf("topisn't\n");
-					if(wwr==0|set.at(currow-1)<=bwr){
-						bwr = bwr - set.at(currow-1);
-						printf("PARTOFSET : %d ,",set.at(currow-1));
+					if(wwr==0|set.at(currow)<=bwr){
+						printf("PARTOFSET : %d ,",set.at(currow));
+						printf("currow = %d\n",currow);
+						bwr = bwr - set.at(currow);
+						//printf("PARTOFSET : %d ,",set.at(currow-1));
 						if(bwr<=0){
 							jobdone = true;
 						}
-						printf("E1 wwr: %d , bwr: %d\n",wwr,bwr);
-					}else if(set.at(currow-1)>bwr){
-						bwr = (set.at(currow-1)-bwr)%w;
-						wwr = wwr - ceil(set.at(currow-1)/w);
-						printf("PARTOFSET :  %d ,",set.at(currow-1));
+						printf("E1 wwr: %d , bwr: %d , currnum: %d\n",wwr,bwr,set.at(currow));
+					}else if(set.at(currow)>bwr){
+						printf("PARTOFSET :  %d ,",set.at(currow));
+						printf("currow = %d\n",currow);
+						bwr = 31 - (set.at(currow)-bwr)%w;
+						printf("ceil: %d\n", (int)ceil(set.at(currow)/w));
+						wwr = wwr - ceil(set.at(currow)/w);
+						//printf("PARTOFSET :  %d ,",set.at(currow-1));
 						if(bwr<=0){
 							jobdone = true;
 						}
-						printf("E2 wwr: %d , bwr: %d\n",wwr,bwr);
+						printf("E2 wwr: %d , bwr: %d , currnum: %d\n",wwr,bwr,set.at(currow));
 					}
 					currow--;
 				}
@@ -140,11 +149,13 @@ void printbits(unsigned int n){
      
     int main(){
 		
-		unsigned int x = 8;
-		printf("28th bit of 8 should be one = %d\n",getbit(x,28));
+		//unsigned int x = 8;
+		unsigned int x = 1<<31;
+		printf("28th bit of 8 should be one = %d\n",getbit(x,0));
+		printbits(x);
      
         std::vector<int> set = {81,80,43,40,30,26,12,11,9};
-        int sum = 159;
+        int sum = 199;
         //int sum = 1000;
         
         /*
