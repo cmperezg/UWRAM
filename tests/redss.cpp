@@ -59,7 +59,7 @@ void printbits(unsigned int n){
         unsigned int wordsneeded = ceil(double(t+1)/w);
         unsigned int elements = set.size()+1;
         //Create table
-        printf("elem: %d, wn: %d\n",elements,wordsneeded);
+        //printf("elem: %d, wn: %d\n",elements,wordsneeded);
         std::vector<std::vector<unsigned int>> table(elements, std::vector<unsigned>(wordsneeded));
         int c,i;
         //Initialize first row
@@ -80,7 +80,7 @@ void printbits(unsigned int n){
             
             
             
-            
+           /*
         //UNCOMMENT TO PRINT THE TABLE
         printf("TABLE\n");    
         for (int i = 0; i < elements; i++)
@@ -89,57 +89,52 @@ void printbits(unsigned int n){
 			printbits(table.at(i).at(j));
 			printf("\n");
 		}
-     //*/   
+        */
         
+        //printbits
+
      
         if((table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1))&1 ==1){
 			
-			
-			int s = t;
-			int currow = elements-1;
+		///*	
+		//UNCOMMENT TO PRINT SUBSET	
+			int wwr = wordsneeded-1;
 			int bwr = t%w;
-			int wwr = wordsneeded -1;
-			bool topisone;
+			int cr = elements-1;
 			bool jobdone = false;
-			printf("Subset: \n");
-			//printf("wwr: %d , bwr: %d\n",wwr,bwr);
-			//printf("currow = %d\n",currow);
-			while((!jobdone)&currow>0){
-				//printf("enter loop. currow = %d\n",currow);
-				topisone = getbit(table.at(currow-1).at(wwr),bwr)==1;
-				if(topisone){
-					printf("\n");
-					printf("topisone\n");
-					printf("I1 wwr: %d , bwr: %d\n",wwr,bwr);
-					printf("currow = %d\n",currow);
-					currow--;
+			int bt = wwr*w + bwr;
+			printf("\nt: %d , SUBSET: ",t);
+			//printf("BWR: %d\n",bwr);
+			while(!jobdone){
+				if(getbit(table.at(cr-1).at(wwr),bwr)==1){
+					cr--;
+					//printf("BWR: %d, WWR: %d, cr: %d\n",bwr,wwr,cr);
+					continue;
 				}else{
-					printf("\n");
-					printf("topisn't\n");
-					if(wwr==0|set.at(currow)<=bwr){
-						printf("PARTOFSET : %d ,",set.at(currow));
-						printf("currow = %d\n",currow);
-						bwr = bwr - set.at(currow);
-						//printf("PARTOFSET : %d ,",set.at(currow-1));
-						if(bwr<=0){
-							jobdone = true;
-						}
-						printf("E1 wwr: %d , bwr: %d , currnum: %d\n",wwr,bwr,set.at(currow));
-					}else if(set.at(currow)>bwr){
-						printf("PARTOFSET :  %d ,",set.at(currow));
-						printf("currow = %d\n",currow);
-						bwr = 31 - (set.at(currow)-bwr)%w;
-						printf("ceil: %d\n", (int)ceil(set.at(currow)/w));
-						wwr = wwr - ceil(set.at(currow)/w);
-						//printf("PARTOFSET :  %d ,",set.at(currow-1));
-						if(bwr<=0){
-							jobdone = true;
-						}
-						printf("E2 wwr: %d , bwr: %d , currnum: %d\n",wwr,bwr,set.at(currow));
+					int pos = set.at(cr-1);
+					//printf("BWR: %d , WWR: %d , POS: %d, bt: %d, cr: %d\n",bwr,wwr,pos,bt,cr);
+					printf(" %d ,",pos);
+					
+					cr--;
+					bt = bt - pos;
+					if(!(pos<=bwr)){
+						//wwr = wwr - (ceil(pos/w));
+						wwr = ceil(double(bt+1)/w) -1;
 					}
-					currow--;
+					
+					//bwr = (bt%w)+1;
+					bwr = (bt%w);
+					//printf("BWR: %d , WWR: %d , POS: %d, bt: %d, cr: %d\n",bwr,wwr,pos,bt,cr);
 				}
+				if(wwr<=0 & bwr==0){
+					jobdone = true;
+					//printf("allsgood");
+				}else if(wwr<0 | bwr <0 | cr<0){
+					jobdone = true;
+					printf("/n Error printing subset");
 				}
+			}
+			
 			
      
              return true;
@@ -148,17 +143,14 @@ void printbits(unsigned int n){
      
      
     int main(){
-		
-		//unsigned int x = 8;
-		unsigned int x = 1<<31;
-		printf("28th bit of 8 should be one = %d\n",getbit(x,0));
-		printbits(x);
+
+
      
-        std::vector<int> set = {81,80,43,40,30,26,12,11,9};
-        int sum = 199;
+        //std::vector<int> set = {81,80,43,40,30,26,12,11,9};
+        //int sum = 175;
         //int sum = 1000;
         
-        /*
+      // /*
         std::vector<int> set = {1052,
 		168,
 		823,
@@ -172,9 +164,36 @@ void printbits(unsigned int n){
 		888,
 		850
 		};
-		
+		//*/
      int sum = 8820;
-     */
+     //int sum = 2668;
+     //int sum = 5470;
+    
+    /*
+    std::vector<int> set = {518533,
+     1037066,
+     2074132,
+     1648264,
+      796528,
+     1593056,
+      686112,
+     1372224,
+      244448,
+      488896,
+      977792,
+     1955584,
+     1411168,
+      322336,
+      644672,
+     1289344,
+       78688,
+      157376,
+      314752,
+      629504,
+     1259008
+		};
+		int sum = 2463098;
+		*/
         int n = set.size();
         if (isSubsetSum(set,sum) == true)
          printf("\nFound a subset with given sum\n");
