@@ -3,11 +3,8 @@
 #include <time.h>
 #include <math.h>
 
-/*#define SIZE_OF_INT  4
-#define SIZE_OF_BYTE  8
-#define NUM_BLOCKS  32
-#define BLOCK_SIZE  SIZE_OF_INT * SIZE_OF_BYTE
-#define WORD_SIZE  NUM_BLOCKS * BLOCK_SIZE*/
+//compile: g++ ultraword.cpp -o ultraword
+
 
 class UltraWord{
 
@@ -30,6 +27,10 @@ class UltraWord{
 		UltraWord spread();
 		UltraWord brs(int x);
 		UltraWord bls(int x);
+		
+		/* CONSTRUCTOR */
+		
+		UltraWord();
 
 		/* OPERATOR OVERLOADING */
 
@@ -155,6 +156,10 @@ int UltraWord::NUM_BLOCKS = 32;
 int UltraWord::BLOCK_SIZE = SIZE_OF_INT * SIZE_OF_BYTE;
 int UltraWord::WORD_SIZE = BLOCK_SIZE * NUM_BLOCKS;
 
+UltraWord::UltraWord(){
+	this->setzeros();
+}
+
 /* OTHER ULTRAWORD FUNCTIONS */
 UltraWord UltraWord::compress(){
 	unsigned int firstmask = 1<<SIZE_OF_INT*SIZE_OF_BYTE-1;
@@ -245,14 +250,17 @@ void UltraWord::setzeros(){
 		this->blocks[i] = 0;
 	}
 }
+
+
+
 /*
 int main(void){
 	time_t t;
     srand((unsigned) time(&t));
 
     UltraWord w1,w2;
-	w1.setzeros();
-	w2.setzeros();
+	//w1.setzeros();
+	//w2.setzeros();
     //w1 = 3;
 
     
@@ -267,8 +275,7 @@ int main(void){
     //UltraWord sum = w1+w2;
 
     //sum.print();
-
-
-}*/
+}
+*/
 
 

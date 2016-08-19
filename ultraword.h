@@ -24,6 +24,11 @@ class UltraWord{
 		UltraWord brs(int x);
 		UltraWord bls(int x);
 
+
+		/* CONSTRUCTOR */
+
+		UltraWord();
+
 		/* OPERATOR OVERLOADING */
 
 		UltraWord operator&(const UltraWord& u)

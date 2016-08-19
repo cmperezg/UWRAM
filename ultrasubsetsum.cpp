@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
+#include <cstdio>
+#include <vector>
 #include "ultraword.h"
 
-//compile: g++ ultrasubsetsum.cpp ultraword.cpp -o ultrasubsetsum
+//compile: g++ ultrasubsetsum.cpp ultraword.cpp -o ultrasubsetsum -std=c++11
 
 
 // get bit #bitno from num. 0 is most significant.
@@ -20,44 +20,50 @@ unsigned int getbit(UltraWord num, int bitno){
 	
 }
 
+/* No boundary array right shift (across UltraWords) */
+std::vector<UltraWord> nbars(std::vector<UltraWord>& orig, unsigned int x){
+	int alength = orig.size();
+	unsigned int b_s = UltraWord::WORD_SIZE;
+	std::vector<UltraWord> shifted(alength);
+	int i;
+	//zeros loop?
+	UltraWord aux1;
+    UltraWord aux2;
+     
+    int bts = floor(x/b_s);
+    int split = x%b_s;
+    i = bts;
+	int j = 0;
+    while(i<alength){
+		aux1 = orig.at(j)>>split;
+		shifted.at(i) = aux1|aux2;
+		aux2 = orig[j]<<(b_s-split);
+		i++;j++;
+	}
+	return shifted;
+}
+
 /* Returns true if there is a subset of set[] with sum equal to t */
-bool isSubsetSum(int set[],int n, int t){
+bool isSubsetSum(std::vector<int>& set,int t){
 	unsigned int w = UltraWord::WORD_SIZE;  //ultra wide word
 	unsigned int wordsneeded = ceil(double(t+1)/w);
-	unsigned int elements = n+1;
+	unsigned int elements = set.size()+1;
 
 	//Create table
-	UltraWord table[elements][wordsneeded];
+	std::vector<std::vector<UltraWord>> table(elements, std::vector<UltraWord>(wordsneeded));
 	int c,i;
-	//Initialize first row
-	for(i=0;i<wordsneeded;i++){
+	//Initialize first row // unnecesary after constructor?
+	/*for(i=0;i<wordsneeded;i++){
 		table[0][i].setzeros();
-	}
-	table[0][0] = 1;
-	table[0][0] = table[0][0]<<(w-1);
+	}*/
+	table[0][0] = 1<<(w-1);
+
 	//Fill the table in bottom up manner
 	int es,ss,ai;
-	for(c=1;c<elements; c++){
-		ai = set[c-1];
-		es = floor(ai/w);
-		ss = ai%w;
-		UltraWord n; //word
-		n.setzeros();
-		UltraWord aun; //auxiliary word
-		aun.setzeros();
+	for(c=1;c<elements;c++){
+		std::vector<UltraWord> aux = nbars(table.at(c-1),set.at(c-1));
 		for(i=0;i<wordsneeded;i++){
-			n = table[c-1][i];
-			if(ai<w){
-				aun = table[c-1][i]>>ai;
-				n = n|aun;
-			}else if(i-es >= 0){
-				aun = table[c-1][i-es]>>ss;
-				n = n|aun;
-			}if(i-es-1 >= 0){
-				aun = table[c-1][i-es-1]<<(w-ss);
-				n = n|aun;
-			}
-			table[c][i] = n;
+			table.at(c).at(i) = table.at(c-1).at(i)|aux.at(i);
 		}
 	}
 /*
@@ -66,45 +72,50 @@ bool isSubsetSum(int set[],int n, int t){
 	for (int i = 0; i < elements; i++)
      {
        for (int j = 0; j < wordsneeded; j++)
-          table[i][j].print();
+          (table.at(i).at(j)).print();
        printf("\n");
      }
 
 */
      
 	UltraWord one;
-	one.setzeros();
+	//one.setzeros();
 	one =1;
 	UltraWord aux = (table[elements-1][wordsneeded-1]>>((w*wordsneeded)-t-1));
 	if((aux&one)==one){
+		///*
 		//Uncomment this code to print subset
-		int currrow = elements;
-		int bwr = t%w;
+		
 		int wwr = wordsneeded-1;
-		bool topisone;
+		int bwr = t%w;
+		int cr = elements-1;
 		bool jobdone = false;
-		printf("Subset: \n");
+		int bt = wwr*w + bwr;
+		printf("\nt: %d , SUBSET: ",t);
 		while(!jobdone){
-			topisone = (getbit(table[currrow-1][wwr],bwr) == 1);
-			if(topisone){
-				currrow--;
+			if(getbit(table.at(c-1).at(wwr),bwr)==1){
+				cr--;
+				continue;
 			}else{
-				if(wwr==0 || set[currrow-1]<=bwr){
-					bwr = bwr - set[currrow-1];
-					printf("%d  " ,set[currrow-1]);
-					if(bwr <= 0){
-						jobdone = true;
-					}
-				}else if(set[currrow-1]>bwr){
-					bwr = (set[currrow -1]-bwr)%w;
-					wwr = wwr - ceil(set[currrow-1]/w);
-					printf("%d , " ,set[currrow-1]);
-					if(bwr <= 0){
-						jobdone = true;
-					}
+				int pos = set.at(cr-1);
+				printf(" %d ,",pos);
+				cr--;
+				bt = bt-pos;
+				if(!(pos<=bwr)){
+					wwr = ceil(double(bt+1)/w)-1;
 				}
+				bwr = bt%w;
+			}
+			if(wwr<=0 & bwr==0){
+				jobdone=true;
+			}else if(wwr<0 | bwr<0 | cr<0){
+				jobdone = true;
+				printf("/n Error printing subset");
 			}
 		}
+		
+		
+		//*/
 		return true;
 	}return false;
 	
@@ -114,38 +125,24 @@ bool isSubsetSum(int set[],int n, int t){
 
 
 int main(){
-	int set[] = {518533,
-	 1037066,
-     2074132,
-     1648264,
-      796528,
-     1593056,
-      686112,
-     1372224,
-      244448,
-      488896,
-      977792,
-     1955584,
-     1411168,
-      322336,
-      644672,
-     1289344,
-       78688,
-      157376,
-      314752,
-      629504,
-     1259008};
-     int sum = 2463098;
 	
-	//int set[] = {81,80,43,40,30,26,12,11,9};
-	//int sum = 63;
+	UltraWord ut;
+	ut.print();
+	ut = 1;
+	ut.print();
+	ut = ut<<1020;
+	ut.print();
+	
+	
+	std::vector<int> set = {81,80,43,40,30,26,12,11,9};
+	int sum = 63;
 
 	//int set[] = {1,2,3,4};
 	//int sum = 10;
 
 
-	int n = sizeof(set)/sizeof(set[0]);
-	if (isSubsetSum(set,n,sum) == true)
+	//int n = sizeof(set)/sizeof(set[0]);
+	if (isSubsetSum(set,sum) == true)
      printf("Found a subset with given sum\n");
   else
      printf("No subset with given sum\n");
