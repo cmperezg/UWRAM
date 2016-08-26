@@ -48,7 +48,7 @@ bool isSubsetSum(std::vector<int>& set,int t){
 	unsigned int w = UltraWord::WORD_SIZE;  //ultra wide word
 	unsigned int wordsneeded = ceil(double(t+1)/w);
 	unsigned int elements = set.size()+1;
-
+	printf("W: %d\n",w);
 	//Create table
 	std::vector<std::vector<UltraWord>> table(elements, std::vector<UltraWord>(wordsneeded));
 	int c,i;
@@ -56,7 +56,8 @@ bool isSubsetSum(std::vector<int>& set,int t){
 	/*for(i=0;i<wordsneeded;i++){
 		table[0][i].setzeros();
 	}*/
-	table[0][0] = 1<<(w-1);
+	table[0][0] = 1;
+	table[0][0] = table[0][0]<<(w-1);
 
 	//Fill the table in bottom up manner
 	int es,ss,ai;
@@ -75,7 +76,7 @@ bool isSubsetSum(std::vector<int>& set,int t){
           (table.at(i).at(j)).print();
        printf("\n");
      }
-
+	
 */
      
 	UltraWord one;
@@ -86,6 +87,7 @@ bool isSubsetSum(std::vector<int>& set,int t){
 		///*
 		//Uncomment this code to print subset
 		
+		
 		int wwr = wordsneeded-1;
 		int bwr = t%w;
 		int cr = elements-1;
@@ -93,10 +95,13 @@ bool isSubsetSum(std::vector<int>& set,int t){
 		int bt = wwr*w + bwr;
 		printf("\nt: %d , SUBSET: ",t);
 		while(!jobdone){
-			if(getbit(table.at(c-1).at(wwr),bwr)==1){
+			//printf("IN LOOP\n");
+			if(getbit(table.at(cr-1).at(wwr),bwr)==1){
+				//printf("IN YES\n");
 				cr--;
 				continue;
 			}else{
+				//printf("IN NO\n");
 				int pos = set.at(cr-1);
 				printf(" %d ,",pos);
 				cr--;
@@ -126,25 +131,55 @@ bool isSubsetSum(std::vector<int>& set,int t){
 
 int main(){
 	
-	UltraWord ut;
+	/*UltraWord ut;
 	ut.print();
 	ut = 1;
 	ut.print();
 	ut = ut<<1020;
 	ut.print();
+	int i;
+	//nbars test
+	std::vector<UltraWord> stack;
+	stack.resize(2); 
+	stack.at(0) = 1;
 	
+	for(i=0;i<2;i++){
+		stack.at(i).print();
+	}
 	
-	std::vector<int> set = {81,80,43,40,30,26,12,11,9};
-	int sum = 63;
+	stack = nbars(stack, 4);
+	
+	for(i=0;i<2;i++){
+		stack.at(i).print();
+	}
+	*/
+	//std::vector<int> set = {81,80,43,40,30,26,12,11,9};
+	//int sum = 63;
+
 
 	//int set[] = {1,2,3,4};
 	//int sum = 10;
 
+	std::vector<int> set = {1052,
+		168,
+		823,
+		1020,
+		1120,
+		2350,
+		67,
+		880,
+		2262,
+		2500,
+		888,
+		850
+		};
+
+     int sum = 8820;
 
 	//int n = sizeof(set)/sizeof(set[0]);
 	if (isSubsetSum(set,sum) == true)
-     printf("Found a subset with given sum\n");
+     printf("\nFound a subset with given sum\n");
   else
-     printf("No subset with given sum\n");
+     printf("\nNo subset with given sum\n");
   return 0;
 }
