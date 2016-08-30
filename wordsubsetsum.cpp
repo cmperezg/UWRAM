@@ -32,9 +32,9 @@
         unsigned int b_s = sizeof(int)*8;
         std::vector<int> shifted(alength);
         int i;
-        for(i=0;i<alength;i++){
+        /*for(i=0;i<alength;i++){
             shifted[i] = 0;
-        }
+        }*/
      
         unsigned int aux1 = 0;
         unsigned int aux2 = 0;
@@ -61,9 +61,9 @@
         std::vector<std::vector<unsigned int>> table(elements, std::vector<unsigned>(wordsneeded));
         int c,i;
         //Initialize first row
-        for(i=0;i<wordsneeded;i++){
+        /*for(i=0;i<wordsneeded;i++){
             table.at(0).at(i) = 0;
-        }
+        }*/
         table[0][0] = 1<<(w-1);
         //Fill the table in bottom up manner
         int es,ss,ai;

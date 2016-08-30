@@ -18,6 +18,12 @@ std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 int k = i+j;
 std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
 
+double test = std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+int ites = std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+
+printf("nanotest: %f\n",test);
+printf("nanotest: %d\n",ites);
+
 std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
 std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() <<std::endl;
 }
