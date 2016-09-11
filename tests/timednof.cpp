@@ -63,11 +63,14 @@ bool isSubsetSumUW(std::vector<int>& set,int t){
 	unsigned int w = UltraWord::WORD_SIZE;  //ultra wide word
 	unsigned int wordsneeded = ceil(double(t+1)/w);
 	unsigned int elements = set.size()+1;
+	
+	printf("w = %d , wneeded = %d",w,wordsneeded);
 	//Create table
+	//PROBLEM HERE!
 	std::vector<std::vector<UltraWord>> table(elements, std::vector<UltraWord>(wordsneeded));
 	
 	//Initialize first row 
-	table[0][0] = 1;
+	table[0][0] = (unsigned long long int)1;
 	table[0][0] = table[0][0]<<(w-1);
 	//Fill the table in bottom up manner
 	int es,ss,ai,j,k,x;

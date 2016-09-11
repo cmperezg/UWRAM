@@ -10,12 +10,12 @@ class UltraWord{
 		static int BLOCK_SIZE;
 		static int WORD_SIZE;
 
-		unsigned int blocks[32];
+		unsigned long long int blocks[64];
 
 		void print();
 		void randomfill();
 		void setzeros();
-		void printbits(unsigned int n);
+		void printbits(unsigned long long int n);
 
 		UltraWord compress();
 		UltraWord spread();
@@ -53,21 +53,22 @@ class UltraWord{
 			return word;
 		}
 				
-				
 		/*No boundary left shift*/
-		UltraWord operator<<(unsigned int x){
+		UltraWord operator<<(unsigned long long int x){
 			UltraWord shifted;
-			shifted.setzeros();
-			unsigned int aux1 = 0;
-			unsigned int aux2 = 0;
+			//shifted.setzeros();
+			unsigned long long int aux1 = 0;
+			unsigned long long int aux2 = 0;
 			
-			int bts = floor(x/BLOCK_SIZE);
-			int split = x%BLOCK_SIZE;
+			long long int bts = floor(x/BLOCK_SIZE);
+			long long int split = x%BLOCK_SIZE;
 			int i = bts;
 			int j = 0;
 			while(i<NUM_BLOCKS){
+				//printf("i=%d, j=%d \n",i,j);
+				aux1 = 0;
 				aux1 = this->blocks[i]<<split;
-				if((i+1)<NUM_BLOCKS){
+				if(((i+1)<NUM_BLOCKS)&&x!=BLOCK_SIZE){
 					aux2=this->blocks[i+1]>>(BLOCK_SIZE-split);
 				}else{
 					aux2 = 0;
@@ -79,17 +80,20 @@ class UltraWord{
 		}
 
 		/* No boundary right shift */
-		UltraWord operator>>(unsigned int x){
+		UltraWord operator>>(unsigned long long int x){
 			UltraWord shifted;
 			shifted.setzeros();
-			unsigned int aux1 = 0;
-			unsigned int aux2 = 0;
+			unsigned long long int aux1 = 0;
+			unsigned long long int aux2 = 0;
 			
-			int bts = floor(x/BLOCK_SIZE);
-			int split = x%BLOCK_SIZE;
+			long long int bts = floor(x/BLOCK_SIZE);
+			long long int split = x%BLOCK_SIZE;
 			int i = bts;
 			int j = 0;
+			//printf("bts=%d \n",bts);
+			//printf("split=%d \n",split);
 			while(i<NUM_BLOCKS){
+				//printf("i=%d, j=%d \n",i,j);
 				aux1 = this->blocks[j]>>split;
 				shifted.blocks[i] = aux1|aux2;
 				aux2 = this->blocks[j]<<(BLOCK_SIZE-split);

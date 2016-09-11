@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-
-//compile: g++ ultraword.cpp -o ultraword
+#include <vector>
+//compile: g++ mintest.cpp -o mintest -std=c++11
 
 
 class UltraWord{
@@ -257,32 +257,10 @@ void UltraWord::setzeros(){
 
 
 
-/*
+
 int main(void){
-	time_t t;
-    srand((unsigned) time(&t));
-
-    UltraWord w1,w2;
-	//w1.setzeros();
-	//w2.setzeros();
-    //w1 = 3;
-
-    
-	//(w1<<100).print();
-	//w1.blocks[0] =1<<31;
-	//w1.randomfill();
-	w1.print();
-	w1 = 7;
-	w1.print();
-	w1 = w1<<64;
-	w1.print();
-	w1 = w1>>64;
-	w1.print();
-
-    //UltraWord sum = w1+w2;
-
-    //sum.print();
+	std::vector<std::vector<UltraWord>> table(10, std::vector<UltraWord>(4));
 }
-*/
+
 
 
