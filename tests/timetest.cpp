@@ -12,18 +12,40 @@ void func(){
 }
 
 int main(){
-	int i = 5; 
-	int j = 4;
-std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-int k = i+j;
-std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+int tott=0;
+int k = 8;
+int i = 5; 
+int j = 4;
+std::chrono::steady_clock::time_point begin;
+std::chrono::steady_clock::time_point end;
+	
+begin = std::chrono::steady_clock::now();
+k = i+j;
+k = k++;
+k=k/2 + i;
+k = k*j;
+end= std::chrono::steady_clock::now();
+tott = tott+std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
 
-double test = std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
-int ites = std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+printf("con test: %d\n",tott);
 
-printf("nanotest: %f\n",test);
-printf("nanotest: %d\n",ites);
+tott = 0;
+i = 5; 
+j = 4;
+k = 8;
+begin = std::chrono::steady_clock::now();
+k = i+j;
+k = k++;
+end= std::chrono::steady_clock::now();
+tott = tott+std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+begin = std::chrono::steady_clock::now();
+k=k/2 + i;
+k = k*j;
+end= std::chrono::steady_clock::now();
+tott = tott+std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+printf("noncon test: %d\n",tott);
 
-std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
-std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() <<std::endl;
+
+
+
 }
