@@ -131,52 +131,31 @@ bool isSubsetSum(std::vector<int>& set,int t){
 
 int main(){
 	
-	/*UltraWord ut;
-	ut.print();
-	ut = 1;
-	ut.print();
-	ut = ut<<1020;
-	ut.print();
-	int i;
-	//nbars test
-	std::vector<UltraWord> stack;
-	stack.resize(2); 
-	stack.at(0) = 1;
-	
-	for(i=0;i<2;i++){
-		stack.at(i).print();
-	}
-	
-	stack = nbars(stack, 4);
-	
-	for(i=0;i<2;i++){
-		stack.at(i).print();
-	}
-	*/
-	//std::vector<int> set = {81,80,43,40,30,26,12,11,9};
-	//int sum = 63;
-
-
-	//int set[] = {1,2,3,4};
-	//int sum = 10;
-
-	std::vector<int> set = {1052,
-		168,
-		823,
-		1020,
-		1120,
-		2350,
-		67,
-		880,
-		2262,
-		2500,
-		888,
-		850bb
+//B1
+std::vector<int> set = {7,
+		2,
+		46,
+		22,
+		65,
+		12,
+		9,
+		4,
+		10,
+		23,
+		24,
+		27,
+		6,
+		15,
+		29,
+		20,
+		10,
+		62,
+		5,
+		19
 		};
 
-     int sum = 8820;
+     int sum = 30;
 
-	//int n = sizeof(set)/sizeof(set[0]);
 	if (isSubsetSum(set,sum) == true)
      printf("\nFound a subset with given sum\n");
   else

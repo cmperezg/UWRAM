@@ -234,14 +234,6 @@ std::tuple<bool,int> isSubsetSumUW(std::vector<int>& set,int t, int t1, int t2, 
 }    
 
 void clearCaches(){
-	/*const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-	char *c = (char *)malloc(size);
-	for (int i = 0; i < 0xffff; i++){
-		for (int j = 0; j < size; j++){
-			c[j] = i*j;
-		}
-	}*/
-	
 	//sync();
 
 	std::ofstream ofs("/proc/sys/vm/drop_caches");
