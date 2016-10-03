@@ -1,58 +1,67 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <algorithm>
+#include <fstream>
 #include <string>
 #include <iostream>
 
 using namespace std;
-int offs = 97;
-
 void bmh(string text, string pat){
 	int patlen = pat.size();
-	int strlen = text.size();
-	int alphalen = 26;
+	long long int strlen = text.size();
+	printf("strlen: %lld\n",strlen);
+	int alphalen = 125; //from 0 to z
 	int delta12[alphalen];
-	int i;
-	for(i=0;i<alphalen;i++){
-		delta12[i] = patlen;
+	int j;
+	for(j=0;j<alphalen;j++){
+		delta12[j] = patlen;
 	}
-	for(i=0;i<patlen;i++){
-		delta12[pat.at(i)-offs] = patlen -i;
+	for(j=0;j<patlen;j++){
+		delta12[pat.at(j)] = patlen -j-1;
 	}
+	
+	char lastch = pat.at(patlen-1);
+	delta12[lastch] = patlen;
+	
+	long long int i;
 	/*for(i=0;i<alphalen;i++){
 		printf("delta12[%d]: %d\n",i,delta12[i]);
 	}*/
-	char lastch = pat.at(patlen-1);
+	//printf("lastch: %c\n",lastch);
 	i = patlen-1;
+	//printf("i: %d, strlen: %d\n",i,strlen);
+	
 	while(i<strlen){
+		//printf("i: %lld\n",i);
 		char ch = text.at(i);
+		//printf("i: %d, ch: %c\n",i,ch);
 		if(ch==lastch){
-			if(pat.compare(text.substr(i-patlen,i))==0){
-				printf("pattern at: %d\n",i-patlen);
-				return;
+			//printf("doesthiseverhappen\n");
+			//cout << "substr: " << text.substr(i-patlen+1,patlen)<< "\n";
+			//printf("comparison: %d \n",(pat.compare(text.substr(i-patlen+1,patlen))));
+			if((pat.compare(text.substr(i-patlen+1,patlen)))==0){
+				printf("pattern at: %lld\n",i-patlen+1);
+				//return;
 			}
-			i = i+delta12[ch-offs];
+			
 		}
+		//printf("ch: %d, i: %lld, del[ch]: %d\n",ch,i,delta12[ch]);
+		i = i+delta12[ch];
 		
 	}return;
 }
 
 int main(){
+
+	ifstream infile {"lidata10.txt"};
+	string fst{istreambuf_iterator<char>(infile),istreambuf_iterator<char>()};
 	
-	//string tests
-	string T = "abcbaabbcabacc";
-	string P = "abac";
-	cout << "length: " << T.size() << "\n";
-	string sub = T.substr(7);
-	cout << sub << "\n";
-	cout << T.at(8) << "\n";
+	transform(fst.begin(),fst.end(),fst.begin(),::tolower);
 	
-	bmh(T,P);
+	//cout<<fst<<"\n";
 	
-	/*
-	int i;
-	char alpha[26] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-	for(i=0;i<26;i++){
-		printf("%c = %d\n",alpha[i],alpha[i]-offs);
-	}
-	* */
+	string P = "quisque";
+	//string P = "elementum risus";
+	bmh(fst,P);
+
 }

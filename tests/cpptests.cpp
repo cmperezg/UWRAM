@@ -37,7 +37,9 @@ int main(){
 	printbits(t);
 	*/
 	
-	std::vector<std::vector<UltraWord>> table(10, std::vector<UltraWord>(4));
+	//std::vector<std::vector<UltraWord>> table(10, std::vector<UltraWord>(4));
 	
+	printf("size of char: %lu \n",sizeof(char));
+	printf("size of 'a': %lu \n",sizeof('a'));
 	return 0;
 }
