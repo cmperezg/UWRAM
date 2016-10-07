@@ -3,6 +3,12 @@
 #include <chrono>
 #include <tuple>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <fstream>
+#include <string>
+#include <iostream>
 #include "ultraword.h"
 
 //compile: g++ cpptests.cpp ultraword.cpp -o cpptests -std=c++11
@@ -27,6 +33,22 @@ void printbits(unsigned long long int n){
 	//printf("%llu",n);
 	printf("\n");
 }
+
+int[] packText(string s){
+	long long int strlen = s.size();
+	
+	int cs = 8; //char size in bits
+	int cn = 4; //number of chars to pack per int
+	
+	int intsnec = ceil(strlen/cn);
+	unsigned int packed[intsnec];
+	bool finished = false;
+	int i = 0; //charcounter
+	int j = 0; //int counter
+	while(!finished){
+	}
+}
+
 int main(){
 	/*
 	int l = sizeof(long long int);
@@ -41,5 +63,17 @@ int main(){
 	
 	printf("size of char: %lu \n",sizeof(char));
 	printf("size of 'a': %lu \n",sizeof('a'));
+	printf("size of abcd: %lu \n", sizeof("abcd"));
+	
+	
+	//text tests
+	
+	ifstream infile {"lidata10.txt"};
+	string fst{istreambuf_iterator<char>(infile),istreambuf_iterator<char>()};
+	
+	transform(fst.begin(),fst.end(),fst.begin(),::tolower);
+	
+	
+	
 	return 0;
 }
