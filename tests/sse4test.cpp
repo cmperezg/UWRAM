@@ -10,17 +10,15 @@
 
 //test to call sse4.2 functions (pcmpestrm)
 
-void printbits(unsigned int n){
+
+void printbits(char n){
 	int i;
 	//sizeof int 32 bits.
-	for(i=32-1;i>=0;i--){
+	for(i=8-1;i>=0;i--){
 		unsigned int mask = ((unsigned int)1)<<i;
 		unsigned int maskedn = n&mask;
 		unsigned int thebit = maskedn >> i;
 		printf("%u",(unsigned int)thebit);
-		if(i%8==0){
-			printf(" ");
-		}
 	}
 	printf(" ");
 }
@@ -45,38 +43,64 @@ void print128_num(__m128i var){
 }
 
 void print128_bits(__m128i var){
-	uint32_t *val = (uint32_t*) &var;
-	printbits(var[0]);
-	printbits(var[1]);
-	printbits(var[2]);
-	printbits(var[3]);
+	uint8_t *val = (uint8_t*) &var;
+	printbits(val[0]);
+	printbits(val[1]);
+	printbits(val[2]);
+	printbits(val[3]);
+	printbits(val[4]);
+	printbits(val[5]);
+    printbits(val[6]);
+    printbits(val[7]);
+    printbits(val[8]);
+    printbits(val[9]);
+    printbits(val[10]); 
+    printbits(val[11]);
+    printbits(val[12]);
+    printbits(val[13]);
+    printbits(val[14]);
+    printbits(val[15]);
 	printf("\n");
 }
 
+__m128i pcmpestrm(const char *p1, const char *p2){
+	
+	__m128i smm1 = _mm_loadu_si128 ((__m128i *) p1);
+	__m128i smm2 = _mm_loadu_si128 ((__m128i *) p2);
+	print128_ch(smm1);
+	print128_ch(smm2);
+	print128_bits(smm1);
+	print128_bits(smm2);
+	//return  _mm_cmpestrm(smm1,13, smm2,2, 12);
+	return  _mm_cmpestrm(smm1,15, smm2,2, 64);
+}
+
+/*int _STTNI_strcmp (const char *p1, const char *p2) {
+	const int mode = 76;
+	__m128i smm1 = _mm_loadu_si128 ((__m128i *) p1);
+	__m128i smm2 = _mm_loadu_si128 ((__m128i *) p2);
+	int ResultIndex;
+	while (1) {
+	ResultIndex = _mm_cmpistri (smm1, smm2, mode );
+	if (ResultIndex != 16) { break; }
+	p1 = p1+16;
+	p2 = p2+16;
+	smm1 = _mm_loadu_si128 ((__m128i *)p1);
+smm2 = _mm_loadu_si128 ((__m128i *)p2);
+}
+p1 = (char *) & smm1;
+p2 = (char *) & smm2;
+if(p1[ResultIndex]<p2[ResultIndex]) return ‐1;
+if(p1[ResultIndex]>p2[ResultIndex]) return 1;
+03/25/2011
+return 0;
+}
+*/
 int main(){
-	std::string a = "abab";
-	std::string pa = "ab";
-	//characters are stored in INVERSE order as the function! 
-	//__m128i s = _mm_set_epi8('i',' ','a','m',' ','a','n',' ','a','n','t','e','l','o','p','e');
-	__m128i s = _mm_set_epi8('e','p','o','l','e','t','n','a',' ','n','a',' ','m','a',' ','i');
-	__m128i p = _mm_set_epi8(0,0,0,0,0,0,0,0,0,0,0,0,0,'t','n','a');
-	
-	//__m128i s = _mm_set_epi8(0,0,0,0,0,0,0,0,'a','n','a','n','a','n','a','b');
-	//__m128i p = _mm_set_epi8(0,0,0,0,0,0,0,0,0,0,0,0,0,0,'a','n');
-	
-	print128_num(s);
-	print128_num(p);
-	
-	print128_bits(s);
-	print128_bits(p);
-	__m128i res =  _mm_cmpistrm(s, p, 0);
-	
+	const char *s = "they helped her";
+	const char *p = "he";
+	__m128i res = pcmpestrm(s,p);
 	print128_bits(res);
-	
-	
-	//int resi = _mm_cmpistri(s, p, 0);
-	//print128_num(res);
-	//printf("cmpistri: %u\n",resi);
 	
 	return 0;
 }
