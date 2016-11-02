@@ -11,7 +11,7 @@
 
 //test to call sse4.2 functions (pcmpestrm)
 
-
+const int mode = _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH|_SIDD_MOST_SIGNIFICANT|_SIDD_NEGATIVE_POLARITY;
 void printbits(char n){
 	int i;
 	//sizeof int 32 bits.
@@ -75,6 +75,19 @@ __m128i pcmpestrm(const char *p1, const char *p2){
 	//return  _mm_cmpestrm(smm1,13, smm2,2, 12);
 	//return  _mm_cmpestrm(smm1,15, smm2,2, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_ORDERED|_SIDD_BIT_MASK);
 	//return  _mm_cmpestrm(smm2,2, smm1,15, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_ORDERED|_SIDD_UNIT_MASK);
+	//int cmpestri = _mm_cmpestri(smm2,4, smm1,16, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_ORDERED|_SIDD_MOST_SIGNIFICANT|_SIDD_NEGATIVE_POLARITY);
+	int one = _mm_cmpistri(smm2, smm1, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH);
+	int two = _mm_cmpistri(smm2, smm1, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH|_SIDD_MOST_SIGNIFICANT);
+	int three = _mm_cmpistri(smm2, smm1, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH|_SIDD_MOST_SIGNIFICANT|_SIDD_NEGATIVE_POLARITY);
+	int four = _mm_cmpestri(smm2,6, smm1, 6,_SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH);
+	int five = _mm_cmpestri(smm2,6, smm1, 6,_SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH|_SIDD_MOST_SIGNIFICANT);
+	int six = _mm_cmpestri(smm2,6, smm1,6,mode );
+	printf("implicit, least sig, norm pol: %d\n",one);
+	printf("implicit, most sig, norm pol: %d\n",two);
+	printf("implicit, most sig, neg pol: %d\n",three);
+	printf("explicit, least sig, norm pol: %d\n",four);
+	printf("explicit, most sig, norm pol: %d\n",five);
+	printf("explicit, most sig, neg pol: %d\n",six);
 	return  _mm_cmpistrm(smm2, smm1, _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_ORDERED|_SIDD_UNIT_MASK);
 
 }
@@ -136,18 +149,23 @@ int main(){
 	//const char *s = "they helped her";
 	//const char *p = "he";
 
-	const char *s = "na a bananana na";
+	//const char *s = "na a bananana na";
+	/*
 	const char *p = "nana";
-
+	
+	std::string astring = "na a bananana na this is a long string banana nana not really that banana long";
+	const char *s = astring.substr(0,16).c_str();
 	__m128i res = pcmpestrm(s,p);
 	print128_bits(res);
-
+	__m128i res2 = pcmpestrm("binana","banana");
+	print128_bits(res2);
 	std::string str = "mississauga";
 	int ind = max_suffix_duval(str,0,9);
 
 	//printf(str.substr(ind));
 	std::cout << str.substr(ind) << "\n";
-
-
+	*/
+	__m128i res2 = pcmpestrm("banana","banana");
+	print128_bits(res2);
 	return 0;
 }

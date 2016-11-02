@@ -5,12 +5,14 @@
 #include <string>
 #include <iostream>
 
+//compile: g++ bmhss.cpp  -o bmhss -std=c++11
+
 using namespace std;
 void bmh(string text, string pat){
 	int patlen = pat.size();
 	long long int strlen = text.size();
 	printf("strlen: %lld\n",strlen);
-	int alphalen = 125; //from 0 to z
+	int alphalen = 128; //ascii
 	int delta12[alphalen];
 	int j;
 	for(j=0;j<alphalen;j++){
@@ -53,7 +55,7 @@ void bmh(string text, string pat){
 
 int main(){
 
-	ifstream infile {"lidata10.txt"};
+	ifstream infile {"lidata100.txt"};
 	string fst{istreambuf_iterator<char>(infile),istreambuf_iterator<char>()};
 	
 	transform(fst.begin(),fst.end(),fst.begin(),::tolower);
