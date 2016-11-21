@@ -21,12 +21,18 @@ class UltraWord{
 		void print();
 		void randomfill();
 		void setzeros();
+		bool iszeros();
 		void printbits(unsigned long long int n);
-
+		
 		UltraWord compress();
 		UltraWord spread();
 		UltraWord brs(int x);
 		UltraWord bls(int x);
+		
+		/* GETTERS AND SETTERS */
+
+		unsigned long long int* getBlocks();
+		void setBlocks(unsigned long long int newb[]);
 		
 		/* CONSTRUCTOR */
 		
@@ -162,7 +168,19 @@ UltraWord::UltraWord(){
 	this->setzeros();
 }
 
+/* GETTERS AND SETTERS */
+
+unsigned long long int* UltraWord::getBlocks(){
+	return this->blocks;
+}
+void UltraWord::setBlocks(unsigned long long int newb[]){
+	int i;
+	for(i=0;i<this->NUM_BLOCKS;i++){
+		this->blocks[i] = newb[i];
+	}
+}
 /* OTHER ULTRAWORD FUNCTIONS */
+
 UltraWord UltraWord::compress(){
 	unsigned int firstmask = 1<<SIZE_OF_INT*SIZE_OF_BYTE-1;
 	int i;
@@ -253,6 +271,16 @@ void UltraWord::setzeros(){
 	for(i=0;i<NUM_BLOCKS;i++){
 		this->blocks[i] = 0;
 	}
+}
+
+bool UltraWord::iszeros(){
+	int i;
+	for(i=0;i<NUM_BLOCKS;i++){
+		if(this->blocks[i] != 0){
+			return false;
+		}
+	}
+	return true;
 }
 
 

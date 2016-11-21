@@ -15,6 +15,7 @@ class UltraWord{
 		void print();
 		void randomfill();
 		void setzeros();
+		bool iszeros();
 		void printbits(unsigned long long int n);
 
 		UltraWord compress();
@@ -23,6 +24,11 @@ class UltraWord{
 		/* boundary shifts*/
 		UltraWord brs(int x);
 		UltraWord bls(int x);
+		
+		/* GETTERS AND SETTERS */
+
+		unsigned long long int* getBlocks();
+		void setBlocks(unsigned long long int newb[]);
 
 
 		/* CONSTRUCTOR */

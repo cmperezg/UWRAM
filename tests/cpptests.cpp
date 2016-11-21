@@ -75,10 +75,10 @@ void print64(std::vector<unsigned long long int> & v){
 
 std::vector<unsigned int> packText32(std::string s){
 	long long int strlen = s.size();
-	
+
 	int cs = 8; //char size in bits
 	int cn = 4; //number of chars to pack per int
-	
+
 	int intsnec = ceil((float)strlen/(float)cn);
 	std::vector<unsigned int> packed(intsnec,0);
 
@@ -98,20 +98,20 @@ std::vector<unsigned int> packText32(std::string s){
 		if(i>=strlen){
 			finished = true;
 		}
-		
+
 	}
 	return packed;
 }
 
 std::vector<unsigned long long int> packText64(std::string s){
 	long long int strlen = s.size();
-	
+
 	int cs = 8; //char size in bits
 	int cn = 8; //number of chars to pack per int
-	
+
 	int intsnec = ceil((float)strlen/(float)cn);
 	std::vector<unsigned long long int> packed(intsnec,0);
-	
+
 	bool finished = false;
 	int i = 0; //charcounter
 	int j = 0; //int counter
@@ -128,7 +128,7 @@ std::vector<unsigned long long int> packText64(std::string s){
 		if(i>=strlen){
 			finished = true;
 		}
-		
+
 	}
 	return packed;
 }
@@ -143,7 +143,7 @@ std::vector<UltraWord> packTextUW(std::string s){
 	printf("wordsize: %d\n",UltraWord::WORD_SIZE);
 	int cn = UltraWord::WORD_SIZE/cs; //number of chars to pack per word
 	printf("cn: %d\n",cn);
-	
+
 	int intsnec = ceil((float)(strlen*8)/(float)cn);
 	printf("intsnec: %d\n",intsnec);
 	//int wn = ceil((float)intsnec/(float)UltraWord::NUM_BLOCKS);
@@ -167,7 +167,7 @@ std::vector<UltraWord> packTextUW(std::string s){
 		if(i>=strlen){
 			finished = true;
 		}
-		
+
 	}
 	return packed;
 }
@@ -176,12 +176,12 @@ int main(){
 	/*
 	int l = sizeof(long long int);
 	printf("size of long long int: %d \n",l);
-	
+
 	unsigned long long int t = ((unsigned long long int)1)<<64;
 	printf("size of long long int: %llu \n",t);
 	printbits(t);
 	*/
-	
+
 	//std::vector<std::vector<UltraWord>> table(10, std::vector<UltraWord>(4));
 	/*
 	printf("size of char: %lu \n",sizeof(char));
@@ -189,16 +189,16 @@ int main(){
 	printf("intrep of '8': %d \n",'8');
 	printf("size of abcd: %lu \n", sizeof("abcd"));
 	*/
-	
+
 	//text tests
-	
+
 	std::ifstream infile {"lidata10.txt"};
 	std::string fst{std::istreambuf_iterator<char>(infile),std::istreambuf_iterator<char>()};
-	
+
 	std::transform(fst.begin(),fst.end(),fst.begin(),::tolower);
-	
+
 	int i;
-	
+
 	std::string smtest = "abcde";
 	//vector<int> shifted(20);
 	//printf("size of smtest: %lu \n", sizeof(smtest));
@@ -206,12 +206,14 @@ int main(){
 	//vector<unsigned int> res = packText(smtest);
 	std::vector<unsigned long long int> res = packText64(fst);
 	print64(res);
-	
+	std::cout<<"a - b: "<<  'a'-'a'<< "\n";
 	//UW PACK TEST
 	/*
 	std::vector<UltraWord> res = packTextUW(fst);
 	for(i=0;i<res.size();i++){
 		res.at(i).print();
 	}*/
+
+
 	return 0;
 }
