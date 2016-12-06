@@ -8,6 +8,11 @@
 #include <list>
 #include <nmmintrin.h>
 
+#include <algorithm>
+#include <fstream>
+
+
+
 //compile: g++ -g wordbmh.cpp -o wordbmh -std=c++11 -msse4.2
 const int mode = _SIDD_UBYTE_OPS|_SIDD_CMP_EQUAL_EACH|_SIDD_MOST_SIGNIFICANT|_SIDD_NEGATIVE_POLARITY;
 
@@ -75,5 +80,13 @@ void printResults(const std::list<int>& s){
 }
 
 int main(){
-	printResults(wbmh("he helped her","he"));
+	std::ifstream infile {"lidata10.txt"};
+	std::string fst{std::istreambuf_iterator<char>(infile),std::istreambuf_iterator<char>()};
+
+	std::transform(fst.begin(),fst.end(),fst.begin(),::tolower);
+	
+	std::string pattern = "vestibulum";
+	
+	//std::list<int> res = uwbmh(fst,pattern);
+	printResults(wbmh(fst,pattern));
 }

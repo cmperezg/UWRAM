@@ -22,6 +22,30 @@ int BLOCK_SIZE = SIZE_OF_INT * SIZE_OF_BYTE;
 int WORD_SIZE = BLOCK_SIZE * NUM_BLOCKS;
 
 
+
+void printUWc(UltraWord& u){
+	unsigned long long int blocks[UltraWord::BLOCK_SIZE];
+	unsigned long long int *a  = u.getBlocks();
+	unsigned long long int mask8 = (unsigned long long int)0xFF<<56;
+	int i;
+	int j;
+	for(i=0;i<UltraWord::NUM_BLOCKS;i++){
+		blocks[i] = a[i];
+	}
+	for(i=0;i<UltraWord::NUM_BLOCKS;i++){
+
+		for(j=0;j<(UltraWord::BLOCK_SIZE/8);j++){
+			printf("%c",(int)(blocks[i]>>56));
+			//printf("i: %d j: %d \n",i,j);
+			//printlongbits(blocks[i]);
+			blocks[i] = blocks[i]<<8;
+		}
+	}
+	std::cout<< std::endl;
+}
+
+
+
 /* function to print the bits of an int */
 void printlongbits(unsigned long long int n){
 	long long int i;
@@ -204,8 +228,8 @@ int main(){
 	//printf("size of smtest: %lu \n", sizeof(smtest));
 	//printf("size of 20 int vector: %lu \n", sizeof(shifted));
 	//vector<unsigned int> res = packText(smtest);
-	std::vector<unsigned long long int> res = packText64(fst);
-	print64(res);
+	//std::vector<unsigned long long int> res = packText64(fst);
+	////print64(res);
 	std::cout<<"a - b: "<<  'a'-'a'<< "\n";
 	//UW PACK TEST
 	/*
@@ -214,6 +238,30 @@ int main(){
 		res.at(i).print();
 	}*/
 
-
+	std::cout << "UW shift test \n";	
+	UltraWord p;
+	std::string pat = "vestibulum";
+	int patlen = pat.size();
+	int j = 0;
+	int k = 0;
+	int cs = 8; //char size in bits
+	int cn = 8; //number of chars to pack per int
+	unsigned long long int temp;
+	unsigned long long int tempblocks2[64]={0};
+	int shift = 0;
+	while(k<patlen){
+		temp = pat.at(k);
+		shift = cn*cs - ((k%cn)+1)*cs;
+		tempblocks2[j] = tempblocks2[j] | (temp<<shift);
+		if((k+1)%cn == 0){	
+			j++;
+		}
+		k++;
+	}
+	p.setBlocks(tempblocks2);
+	printUWc(p);
+	//p.print();
+	p = p>>64;
+	printUWc(p);
 	return 0;
 }

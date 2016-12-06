@@ -102,7 +102,9 @@ class UltraWord{
 				//printf("i=%d, j=%d \n",i,j);
 				aux1 = this->blocks[j]>>split;
 				shifted.blocks[i] = aux1|aux2;
-				aux2 = this->blocks[j]<<(BLOCK_SIZE-split);
+				if(split!=0){
+					aux2 = this->blocks[j]<<(BLOCK_SIZE-split);
+				}
 				i++;j++;
 			}
 			return shifted;

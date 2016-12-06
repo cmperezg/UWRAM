@@ -4,14 +4,15 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <list>
 
-//compile: g++ bmhss.cpp  -o bmhss -std=c++11
+//compile: g++ bmh.cpp  -o bmh -std=c++11
 
-using namespace std;
-void bmh(string text, string pat){
+std::list<int> bmh(std::string text, std::string pat){
+	std::list<int> res;
 	int patlen = pat.size();
 	long long int strlen = text.size();
-	printf("strlen: %lld\n",strlen);
+	//printf("strlen: %lld\n",strlen);
 	int alphalen = 128; //ascii
 	int delta12[alphalen];
 	int j;
@@ -26,40 +27,45 @@ void bmh(string text, string pat){
 	delta12[lastch] = patlen;
 	
 	long long int i;
-	/*for(i=0;i<alphalen;i++){
-		printf("delta12[%d]: %d\n",i,delta12[i]);
-	}*/
-	//printf("lastch: %c\n",lastch);
+
 	i = patlen-1;
-	//printf("i: %d, strlen: %d\n",i,strlen);
 	
 	while(i<strlen){
 		//printf("i: %lld\n",i);
 		char ch = text.at(i);
-		//printf("i: %d, ch: %c\n",i,ch);
 		if(ch==lastch){
 			if((pat.compare(text.substr(i-patlen+1,patlen)))==0){
-				printf("pattern at: %lld\n",i-patlen+1);
-				//return;
+				res.push_back(i-patlen+1);
+
 			}
 			
 		}
 		//printf("ch: %d, i: %lld, del[ch]: %d\n",ch,i,delta12[ch]);
 		i = i+delta12[ch];
 		
-	}return;
+	}return res;
+}
+
+
+void printResults(const std::list<int>& s){
+	std::cout<< "found pattern at: ";
+	std::list<int>::const_iterator i;
+	for(i=s.begin();i!=s.end();++i){
+		std::cout<<*i << " ";
+	}
+	std::cout<< "\n";
 }
 
 int main(){
 
-	ifstream infile {"lidata10.txt"};
-	string fst{istreambuf_iterator<char>(infile),istreambuf_iterator<char>()};
+	std::ifstream infile {"lidata10.txt"};
+	std::string fst{std::istreambuf_iterator<char>(infile),std::istreambuf_iterator<char>()};
 	
-	transform(fst.begin(),fst.end(),fst.begin(),::tolower);
+	std::transform(fst.begin(),fst.end(),fst.begin(),::tolower);
 	
 	//cout<<fst<<"\n";
 	
-	string P = "vestibulum";
-	bmh(fst,P);
+	std::string P = "vestibulum";
+	printResults(bmh(fst,P));
 
 }

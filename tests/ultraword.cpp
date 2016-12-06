@@ -21,15 +21,21 @@ class UltraWord{
 		void print();
 		void randomfill();
 		void setzeros();
+		bool iszeros();
 		void printbits(unsigned long long int n);
 
 		UltraWord compress();
 		UltraWord spread();
 		UltraWord brs(int x);
 		UltraWord bls(int x);
-		
+
+		/* GETTERS AND SETTERS */
+
+		unsigned long long int* getBlocks();
+		void setBlocks(unsigned long long int newb[]);
+
 		/* CONSTRUCTOR */
-		
+
 		UltraWord();
 
 		/* OPERATOR OVERLOADING */
@@ -53,14 +59,14 @@ class UltraWord{
 			}
 			return word;
 		}
-		
+
 		/*No boundary left shift*/
 		UltraWord operator<<(unsigned long long int x){
 			UltraWord shifted;
 			//shifted.setzeros();
 			unsigned long long int aux1 = 0;
 			unsigned long long int aux2 = 0;
-			
+
 			long long int bts = floor(x/BLOCK_SIZE);
 			long long int split = x%BLOCK_SIZE;
 			int i = bts;
@@ -86,7 +92,7 @@ class UltraWord{
 			shifted.setzeros();
 			unsigned long long int aux1 = 0;
 			unsigned long long int aux2 = 0;
-			
+
 			long long int bts = floor(x/BLOCK_SIZE);
 			long long int split = x%BLOCK_SIZE;
 			int i = bts;
@@ -97,7 +103,9 @@ class UltraWord{
 				//printf("i=%d, j=%d \n",i,j);
 				aux1 = this->blocks[j]>>split;
 				shifted.blocks[i] = aux1|aux2;
+				if(split!=0){
 				aux2 = this->blocks[j]<<(BLOCK_SIZE-split);
+			}
 				i++;j++;
 			}
 			return shifted;
@@ -162,7 +170,19 @@ UltraWord::UltraWord(){
 	this->setzeros();
 }
 
+/* GETTERS AND SETTERS */
+
+unsigned long long int* UltraWord::getBlocks(){
+	return this->blocks;
+}
+void UltraWord::setBlocks(unsigned long long int newb[]){
+	int i;
+	for(i=0;i<this->NUM_BLOCKS;i++){
+		this->blocks[i] = newb[i];
+	}
+}
 /* OTHER ULTRAWORD FUNCTIONS */
+
 UltraWord UltraWord::compress(){
 	unsigned int firstmask = 1<<SIZE_OF_INT*SIZE_OF_BYTE-1;
 	int i;
@@ -255,6 +275,16 @@ void UltraWord::setzeros(){
 	}
 }
 
+bool UltraWord::iszeros(){
+	int i;
+	for(i=0;i<NUM_BLOCKS;i++){
+		if(this->blocks[i] != 0){
+			return false;
+		}
+	}
+	return true;
+}
+
 
 
 /*
@@ -267,7 +297,7 @@ int main(void){
 	//w2.setzeros();
     //w1 = 3;
 
-    
+
 	//(w1<<100).print();
 	//w1.blocks[0] =1<<31;
 	//w1.randomfill();

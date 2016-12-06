@@ -13,25 +13,7 @@
 #include "ultraword.h"
 
 
-//compile: g++ uwbmh.cpp ultraword.cpp -o uwbmh -std=c++11
-
-void printlongbits(unsigned long long int n){
-	long long int i;
-	for(i=63;i>=0;i--){
-		unsigned long long int mask = ((unsigned long long int)1)<<i;
-		unsigned long long int maskedn = n&mask;
-		unsigned long long int thebit = maskedn >> i;
-		printf("%u",(unsigned int)thebit);
-		if(i%8==0){
-			printf(" ");
-		}
-		//printf("%llu",n);
-	}
-	//printf("%llu",n);
-	printf("\n");
-}
-
-
+//compile: g++ disjuwbmh.cpp ultraword.cpp -o disjuwbmh -std=c++11
 
 void printUWc(UltraWord& u){
 	unsigned long long int blocks[UltraWord::BLOCK_SIZE];
@@ -65,90 +47,96 @@ std::list<int> uwbmh(std::string text, std::string pat){
 	UltraWord t; //text
 	UltraWord p; //pattern
 	
+	//PREPROCESSING
 	//pack first UW
 	unsigned long long int tempblocks[64]={0};
 	unsigned long long int temp;
 	int shift = 0;
-	//tempblocks[0] = 0;
 	while(i<strlen & j<UltraWord::NUM_BLOCKS){
 		temp = text.at(i);
 		shift = cn*cs - ((i%cn)+1)*cs;
 		tempblocks[j] = tempblocks[j] | (temp<<shift);
-		if((i+1)%cn == 0){
-			
+		if((i+1)%cn == 0){	
 			j++;
-			//tempblocks[j] = 0;
 		}
 		i++;
 	}	
-	std::cout << "i after packing" << i << " \n";
+
 	t.setBlocks(tempblocks);
 	//pack pattern into UW. pattern should be shorter than 512 chars
 	unsigned long long int tempblocks2[64]={0};
 	int k=0; j=0;
+	//how many blocks does the pattern need?
+	int bn = ceil((float)patlen/(float)cn);
+	std::cout<<"blocksneeded: " << bn << "\n";
+	//how many times will the pattern fit?
+	int ft = floor((float)UltraWord::NUM_BLOCKS/(float)bn);
+	//final shift to align
+	//int fsa = UltraWord::WORD_SIZE - (bn*UltraWord::BLOCK_SIZE*ft);
+	//pack first
 	while(k<patlen){
 		temp = pat.at(k);
 		shift = cn*cs - ((k%cn)+1)*cs;
-		std::cout<< "shift: " << shift << "\n";
 		tempblocks2[j] = tempblocks2[j] | (temp<<shift);
-		if((k+1)%cn == 0){
-			
+		if((k+1)%cn == 0){	
 			j++;
-			//tempblocks[j] = 0;
 		}
 		k++;
 	}
 	p.setBlocks(tempblocks2);
-	printUWc(t);
 	printUWc(p);
-	
-	
-	//UW window mask
-	UltraWord wmask;
-	UltraWord one;
-	wmask=1;
-	one =1;
-	for(j=0;j<(patlen*8)-1;j++){
-		wmask = (wmask<<1)|one;
+	//replicate pattern ft times over p
+	for(k=0;k<ft;k++){
+		p = p | (p>>(bn*cs*cn));
 	}
-	wmask = wmask<<(UltraWord::WORD_SIZE-(patlen*8));
-	UltraWord testequal;
-
-	int shcount = strlen - patlen; //number of shifts needed to cover all windows
-	int rotcount = strlen - (UltraWord::WORD_SIZE/8); // number of rotations needed to add whole text to UW.
-	int count = 0; // number of shifts so far
-	std::cout << "shcount" << shcount << " \n";
-	std::cout << "rotcount" << rotcount << " \n";
+	
+	//std::cout << bn*cs*cn << "\n";
+	printUWc(p);
+	//p.print();
+	
+	
+	
+	//SEARCH
+	
 	bool finished = false;
-	UltraWord rot;
-	while(!finished){
-		//std::cout<<"printingyay! \n";
-		//printUWc(t);
-		testequal = t&wmask;
-		testequal = testequal-p;
-		if(testequal.iszeros()){
-			//match
-			res.push_back(count);
-		}
-		
-		if(count<shcount){
-			t = t<<8;
-			if(count<rotcount){
-				rot = text.at(i);
-				t = t|rot;
+	UltraWord sub;
+	int check = UltraWord::NUM_BLOCKS - (UltraWord::NUM_BLOCKS%bn) -1; //last useful block
+	int shifts = (bn*UltraWord::BLOCK_SIZE)-1;
+	//bool moreshifts = shifts >0;
+	int align = (cn-(patlen%cn))*cs;
+	int l; 
+	int offset = 0;
+	while(!finished){ // while there is still more text
+		int countshifts;
+		for(countshifts=0;countfshifts<=shifts;countshifts++;){ //while there is more to search in current word
+			sub = t - p;
+			if((sub.blocks[check]>>align) == 0){
+				//check the rest of the block used
+				for(l=1;l<bn;l++){
+					if(sub.blocks[check-l]!=0){
+						break;
+					}else{
+						if(l==bn-1){
+							//pattern found
+							  res.push_back(offset+(check*cs*cn)+shiftcount*cs);
+						}
+					}
+				}
 			}
 			
-		}else{
-			finished = true;
+			check = check - bn;
+			t = t<<cs;
+			
 		}
 		
-		
-		i++;
-		count++;
+		//add new 
 	}
+	
+
 	return res;
 	
 }
+
 void printResults(const std::list<int>& s){
 	std::cout<< "found pattern at: ";
 	std::list<int>::const_iterator i;
