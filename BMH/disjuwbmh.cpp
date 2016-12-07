@@ -101,40 +101,63 @@ std::list<int> uwbmh(std::string text, std::string pat){
 	bool finished = false;
 	UltraWord sub;
 	int check = UltraWord::NUM_BLOCKS - (UltraWord::NUM_BLOCKS%bn) -1; //last useful block
-	int shifts = (bn*UltraWord::BLOCK_SIZE)-1;
+	//std::cout<<"check: " << check << "\n";
+	int shifts = (bn*cn)-1;
 	//bool moreshifts = shifts >0;
 	int align = (cn-(patlen%cn))*cs;
+	std::cout<<"shifts: " << shifts << "\n";
+	std::cout<<"align: " << align << "\n";
 	int l; 
 	int offset = 0;
 	while(!finished){ // while there is still more text
-		int countshifts;
-		for(countshifts=0;countfshifts<=shifts;countshifts++;){ //while there is more to search in current word
+		if(i>= strlen){
+			finished = true;
+		}
+		int shiftcount;
+		
+		for(shiftcount=0;shiftcount<=shifts;shiftcount++){ //while there is more to search in current word
 			sub = t - p;
-			if((sub.blocks[check]>>align) == 0){
-				//check the rest of the block used
-				for(l=1;l<bn;l++){
-					if(sub.blocks[check-l]!=0){
-						break;
-					}else{
-						if(l==bn-1){
-							//pattern found
-							  res.push_back(offset+(check*cs*cn)+shiftcount*cs);
+			//std::cout<<"shiftcount: " << shiftcount << "\n";
+			//int m;
+			while(check>=0){
+				//std::cout<<"check: " << check << "\n";
+				if((sub.blocks[check]>>align) == 0){
+					std::cout<<"align was 0 " << "\n";
+					//check the rest of the block used
+					for(l=1;l<bn;l++){
+						if(sub.blocks[check-l]!=0){
+							break;
+						}else{
+							if(l==bn-1){
+								//pattern found
+								  res.push_back(offset+(check*cs*cn)+shiftcount*cs);
+							}
 						}
 					}
+					
 				}
+				check = check - bn;
 			}
-			
-			check = check - bn;
 			t = t<<cs;
-			
+			check = UltraWord::NUM_BLOCKS - (UltraWord::NUM_BLOCKS%bn) -1;
 		}
-		
-		//add new 
+		//pack next UW
+		unsigned long long int tb[64]={0};
+		int shift = 0;
+		j=0;
+		while(i<strlen & j<UltraWord::NUM_BLOCKS){
+			temp = text.at(i);
+			shift = cn*cs - ((i%cn)+1)*cs;
+			tb[j] = tb[j] | (temp<<shift);
+			if((i+1)%cn == 0){	
+				j++;
+			}
+			i++;
+			offset = offset+ i;
+		}
+		std::cout<<"offset: " << offset << "\n";
 	}
-	
-
 	return res;
-	
 }
 
 void printResults(const std::list<int>& s){
