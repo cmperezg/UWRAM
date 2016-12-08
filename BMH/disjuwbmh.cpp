@@ -36,6 +36,23 @@ void printUWc(UltraWord& u){
 	std::cout<< std::endl;
 }
 
+/* function to print the bits of an int */
+void printlongbits(unsigned long long int n){
+	long long int i;
+	for(i=8*8-1;i>=0;i--){
+		unsigned long long int mask = ((unsigned long long int)1)<<i;
+		unsigned long long int maskedn = n&mask;
+		unsigned long long int thebit = maskedn >> i;
+		printf("%u",(unsigned int)thebit);
+		if(i%8==0){
+			printf(" ");
+		}
+		//printf("%llu",n);
+	}
+	//printf("%llu",n);
+	printf("\n");
+}
+
 std::list<int> uwbmh(std::string text, std::string pat){
 	std::list<int> res;
 	int cs = 8; //char size in bits
@@ -63,12 +80,13 @@ std::list<int> uwbmh(std::string text, std::string pat){
 	}	
 
 	t.setBlocks(tempblocks);
+	printUWc(t);
 	//pack pattern into UW. pattern should be shorter than 512 chars
 	unsigned long long int tempblocks2[64]={0};
 	int k=0; j=0;
 	//how many blocks does the pattern need?
 	int bn = ceil((float)patlen/(float)cn);
-	std::cout<<"blocksneeded: " << bn << "\n";
+	//std::cout<<"blocksneeded: " << bn << "\n";
 	//how many times will the pattern fit?
 	int ft = floor((float)UltraWord::NUM_BLOCKS/(float)bn);
 	//final shift to align
@@ -84,14 +102,14 @@ std::list<int> uwbmh(std::string text, std::string pat){
 		k++;
 	}
 	p.setBlocks(tempblocks2);
-	printUWc(p);
+	//printUWc(p);
 	//replicate pattern ft times over p
 	for(k=0;k<ft;k++){
 		p = p | (p>>(bn*cs*cn));
 	}
 	
 	//std::cout << bn*cs*cn << "\n";
-	printUWc(p);
+	//printUWc(p);
 	//p.print();
 	
 	
@@ -105,8 +123,8 @@ std::list<int> uwbmh(std::string text, std::string pat){
 	int shifts = (bn*cn)-1;
 	//bool moreshifts = shifts >0;
 	int align = (cn-(patlen%cn))*cs;
-	std::cout<<"shifts: " << shifts << "\n";
-	std::cout<<"align: " << align << "\n";
+	//std::cout<<"shifts: " << shifts << "\n";
+	//std::cout<<"align: " << align << "\n";
 	int l; 
 	int offset = 0;
 	while(!finished){ // while there is still more text
@@ -122,7 +140,15 @@ std::list<int> uwbmh(std::string text, std::string pat){
 			while(check>=0){
 				//std::cout<<"check: " << check << "\n";
 				if((sub.blocks[check]>>align) == 0){
-					std::cout<<"align was 0 " << "\n";
+					//std::cout<<"offset: " << offset << "\n";
+					//std::cout<<"check: "<<check << "\n";
+					//std::cout<<"text" << "\n";
+					//printlongbits(t.blocks[check]);
+					//printlongbits(t.blocks[check-1]);
+					//std::cout<<"pattern" << "\n";
+					//printlongbits(p.blocks[check]);
+					//printlongbits(p.blocks[check-1]);
+					
 					//check the rest of the block used
 					for(l=1;l<bn;l++){
 						if(sub.blocks[check-l]!=0){
@@ -130,7 +156,8 @@ std::list<int> uwbmh(std::string text, std::string pat){
 						}else{
 							if(l==bn-1){
 								//pattern found
-								  res.push_back(offset+(check*cs*cn)+shiftcount*cs);
+								//std::cout<<"dingdingding" << "\n";
+								  res.push_back(offset+shiftcount+(check*cn)+1);
 							}
 						}
 					}
@@ -146,6 +173,7 @@ std::list<int> uwbmh(std::string text, std::string pat){
 		int shift = 0;
 		j=0;
 		while(i<strlen & j<UltraWord::NUM_BLOCKS){
+			offset++;
 			temp = text.at(i);
 			shift = cn*cs - ((i%cn)+1)*cs;
 			tb[j] = tb[j] | (temp<<shift);
@@ -153,9 +181,11 @@ std::list<int> uwbmh(std::string text, std::string pat){
 				j++;
 			}
 			i++;
-			offset = offset+ i;
+			
 		}
-		std::cout<<"offset: " << offset << "\n";
+		t.setBlocks(tb);
+		printUWc(t);
+		std::cout<<"\n\n NEW ONE \n\n";
 	}
 	return res;
 }
