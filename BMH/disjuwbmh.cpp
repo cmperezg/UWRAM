@@ -157,7 +157,7 @@ std::list<int> uwbmh(std::string text, std::string pat){
 							if(l==bn-1){
 								//pattern found
 								//std::cout<<"dingdingding" << "\n";
-								  res.push_back(offset+shiftcount+(check*cn)+1);
+								  res.push_back(offset+shiftcount+((check-l)*cn));
 							}
 						}
 					}
