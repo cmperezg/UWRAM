@@ -63,6 +63,7 @@ std::list<int> uwbmh(std::string text, std::string pat){
 	int patlen = pat.size();
 	UltraWord t; //text
 	UltraWord p; //pattern
+	int tempoffset = 0;
 	
 	//PREPROCESSING
 	//pack first UW
@@ -77,20 +78,18 @@ std::list<int> uwbmh(std::string text, std::string pat){
 			j++;
 		}
 		i++;
+		tempoffset++;
 	}	
 
 	t.setBlocks(tempblocks);
-	printUWc(t);
+	//printUWc(t);
 	//pack pattern into UW. pattern should be shorter than 512 chars
 	unsigned long long int tempblocks2[64]={0};
 	int k=0; j=0;
 	//how many blocks does the pattern need?
 	int bn = ceil((float)patlen/(float)cn);
-	//std::cout<<"blocksneeded: " << bn << "\n";
 	//how many times will the pattern fit?
 	int ft = floor((float)UltraWord::NUM_BLOCKS/(float)bn);
-	//final shift to align
-	//int fsa = UltraWord::WORD_SIZE - (bn*UltraWord::BLOCK_SIZE*ft);
 	//pack first
 	while(k<patlen){
 		temp = pat.at(k);
@@ -102,29 +101,20 @@ std::list<int> uwbmh(std::string text, std::string pat){
 		k++;
 	}
 	p.setBlocks(tempblocks2);
-	//printUWc(p);
 	//replicate pattern ft times over p
 	for(k=0;k<ft;k++){
 		p = p | (p>>(bn*cs*cn));
 	}
 	
-	//std::cout << bn*cs*cn << "\n";
-	//printUWc(p);
-	//p.print();
-	
-	
+
 	
 	//SEARCH
 	
 	bool finished = false;
 	UltraWord sub;
 	int check = UltraWord::NUM_BLOCKS - (UltraWord::NUM_BLOCKS%bn) -1; //last useful block
-	//std::cout<<"check: " << check << "\n";
 	int shifts = (bn*cn)-1;
-	//bool moreshifts = shifts >0;
 	int align = (cn-(patlen%cn))*cs;
-	//std::cout<<"shifts: " << shifts << "\n";
-	//std::cout<<"align: " << align << "\n";
 	int l; 
 	int offset = 0;
 	while(!finished){ // while there is still more text
@@ -132,23 +122,12 @@ std::list<int> uwbmh(std::string text, std::string pat){
 			finished = true;
 		}
 		int shiftcount;
-		
-		for(shiftcount=0;shiftcount<=shifts;shiftcount++){ //while there is more to search in current word
+		//while there is more to search in current word
+		for(shiftcount=0;shiftcount<=shifts;shiftcount++){ 
 			sub = t - p;
-			//std::cout<<"shiftcount: " << shiftcount << "\n";
-			//int m;
 			while(check>=0){
-				//std::cout<<"check: " << check << "\n";
-				if((sub.blocks[check]>>align) == 0){
-					//std::cout<<"offset: " << offset << "\n";
-					//std::cout<<"check: "<<check << "\n";
-					//std::cout<<"text" << "\n";
-					//printlongbits(t.blocks[check]);
-					//printlongbits(t.blocks[check-1]);
-					//std::cout<<"pattern" << "\n";
-					//printlongbits(p.blocks[check]);
-					//printlongbits(p.blocks[check-1]);
-					
+
+				if((sub.blocks[check]>>align) == 0){	
 					//check the rest of the block used
 					for(l=1;l<bn;l++){
 						if(sub.blocks[check-l]!=0){
@@ -156,8 +135,13 @@ std::list<int> uwbmh(std::string text, std::string pat){
 						}else{
 							if(l==bn-1){
 								//pattern found
-								//std::cout<<"dingdingding" << "\n";
-								  res.push_back(offset+shiftcount+((check-l)*cn));
+								/*std::cout<<"FOUND" << "\n";
+								std::cout<<"index: " << offset+shiftcount+((check-l)*cn) << "\n";
+								std::cout<<"offset: " << offset << "\n";
+								std::cout<<"shiftcount: " << shiftcount << "\n";
+								std::cout<<"check: " << check << "\n";
+								std::cout<<"l: " << l << "\n\n\n";*/
+								res.push_back(offset+shiftcount+((check-l)*cn));
 							}
 						}
 					}
@@ -168,12 +152,17 @@ std::list<int> uwbmh(std::string text, std::string pat){
 			t = t<<cs;
 			check = UltraWord::NUM_BLOCKS - (UltraWord::NUM_BLOCKS%bn) -1;
 		}
+		if(finished){
+			break;
+		}
 		//pack next UW
 		unsigned long long int tb[64]={0};
 		int shift = 0;
 		j=0;
+		offset = tempoffset;
+		//tempoffset = 0;
 		while(i<strlen & j<UltraWord::NUM_BLOCKS){
-			offset++;
+			tempoffset++;
 			temp = text.at(i);
 			shift = cn*cs - ((i%cn)+1)*cs;
 			tb[j] = tb[j] | (temp<<shift);
@@ -184,9 +173,9 @@ std::list<int> uwbmh(std::string text, std::string pat){
 			
 		}
 		t.setBlocks(tb);
-		printUWc(t);
-		std::cout<<"\n\n NEW ONE \n\n";
+
 	}
+	std::cout<<"strlen: " << strlen << "\n";
 	return res;
 }
 
@@ -207,8 +196,9 @@ int main(){
 	std::transform(fst.begin(),fst.end(),fst.begin(),::tolower);
 	
 	std::string pattern = "vestibulum";
-	
-	printResults(uwbmh(fst,pattern));
+	std::list<int> s = uwbmh(fst,pattern);
+	s.sort();
+	printResults(s);
 
 	
 	
