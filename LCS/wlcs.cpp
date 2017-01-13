@@ -4,7 +4,7 @@
 #include <math.h> 
 
 //compile = g++ -o wlcs -g lcs.cpp -std=c++11
-
+//for a regular word of 64 bits
 
 int min(int a, int b){
 	return !(b<a)?a:b; 
@@ -18,8 +18,8 @@ int lcslength(std::string X, std::string Y){
 	int m = X.size();
 	int n = Y.size();
 	
-	//using ascii f = 8 bits for now
-	int f = 8; //field size
+	//using ascii, 7 bits for now
+	int f = 7 + 1; //field size. 8th bit is a test bit
 	
 	int H [m][n];
 	int V [m][n];
@@ -45,7 +45,11 @@ int lcslength(std::string X, std::string Y){
 		for(t=1;t<=s;t++){
 			int jp = min(j+s-1,j2);
 			int ip = max(i+s-1,i1);
-			                                                      
+			  
+			long long int wy;
+			long long int wx;
+			
+			                                                    
 			
 		}
 	}
