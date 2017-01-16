@@ -197,71 +197,22 @@ std::vector<UltraWord> packTextUW(std::string s){
 }
 
 int main(){
-	/*
-	int l = sizeof(long long int);
-	printf("size of long long int: %d \n",l);
-
-	unsigned long long int t = ((unsigned long long int)1)<<64;
-	printf("size of long long int: %llu \n",t);
-	printbits(t);
-	*/
-
-	//std::vector<std::vector<UltraWord>> table(10, std::vector<UltraWord>(4));
-	/*
-	printf("size of char: %lu \n",sizeof(char));
-	printf("size of '8': %lu \n",sizeof('8'));
-	printf("intrep of '8': %d \n",'8');
-	printf("size of abcd: %lu \n", sizeof("abcd"));
-	*/
-
-	//text tests
-
-	std::ifstream infile {"lidata10.txt"};
-	std::string fst{std::istreambuf_iterator<char>(infile),std::istreambuf_iterator<char>()};
-
-	std::transform(fst.begin(),fst.end(),fst.begin(),::tolower);
-
-	int i;
-
-	std::string smtest = "abcde";
-	//vector<int> shifted(20);
-	//printf("size of smtest: %lu \n", sizeof(smtest));
-	//printf("size of 20 int vector: %lu \n", sizeof(shifted));
-	//vector<unsigned int> res = packText(smtest);
-	//std::vector<unsigned long long int> res = packText64(fst);
-	////print64(res);
-	std::cout<<"a - b: "<<  'a'-'a'<< "\n";
-	//UW PACK TEST
-	/*
-	std::vector<UltraWord> res = packTextUW(fst);
-	for(i=0;i<res.size();i++){
-		res.at(i).print();
-	}*/
-
-	std::cout << "UW shift test \n";	
-	UltraWord p;
-	std::string pat = "vestibulum";
-	int patlen = pat.size();
-	int j = 0;
-	int k = 0;
-	int cs = 8; //char size in bits
-	int cn = 8; //number of chars to pack per int
-	unsigned long long int temp;
-	unsigned long long int tempblocks2[64]={0};
-	int shift = 0;
-	while(k<patlen){
-		temp = pat.at(k);
-		shift = cn*cs - ((k%cn)+1)*cs;
-		tempblocks2[j] = tempblocks2[j] | (temp<<shift);
-		if((k+1)%cn == 0){	
-			j++;
-		}
-		k++;
-	}
-	p.setBlocks(tempblocks2);
-	printUWc(p);
-	//p.print();
-	p = p>>64;
-	printUWc(p);
-	return 0;
+	unsigned int a = 128;
+	unsigned int b = 1024;
+	
+	std::cout<<"a: ";
+	printbits(a);
+	std::cout<<"b: ";
+	printbits(b);
+	
+	unsigned int c = a-b;
+	std::cout<<"a-b: ";
+	printbits(c);
+	
+	unsigned int t = 1;
+	unsigned int t2 = 2;
+	
+	int x = t-t2;
+	std::cout<<"1-2
+	
 }
