@@ -28,11 +28,41 @@ void printlongbits(unsigned long long int n){
 	}
 	printf("\n");
 }
+
+//equals function. Substract wy from wx,mask out non-zero results and
+//write a 1 in each field that resulted in zero.
+unsigned long long int equals(unsigned long long int wx,unsigned long long int wy,unsigned long long int posmask, int f){
+	unsigned long long int negmask = ~posmask;
+	wx = wx | posmask;
+	unsigned long long int ans = wx-wy;
+	ans = ans&posmask;
+	
+	//ans now holds a 1 at the test bit of every field where wx>=wy.
+	//now repeat the other way around and & results to keep only fields which are equal.
+	wx = wx&negmask;
+	wy = wy|posmask;
+	unsigned long long int temp = wy-wx;
+	temp = temp&posmask;
+	
+	ans = ans&temp;
+	
+	ans = ans>>f-1;
+	return ans;
+}
 int lcslength(std::string X, std::string Y){
 	int w = 64; //block size, not UW.
+	//std::string X = "*";
+	//std::string Y = "*";
+	//X.append(x);
+	//Y.append(y);
 	int m = X.size();
 	int n = Y.size();
-	
+	X = "*"+X;
+	Y = "*"+Y;
+	std::cout<<"X: "<<X<<"\n";
+	std::cout<<"Y: "<<Y<<"\n";
+	std::cout<<"m: "<<m<<"\n";
+	std::cout<<"n: "<<n<<"\n";
 	//using ascii, 7 bits for now
 	int f = 7 + 1; //field size. 8th bit is a test bit, assume that w%f = 0 always.
 	int c; //general counter
@@ -42,11 +72,11 @@ int lcslength(std::string X, std::string Y){
 		posmask = posmask<<f | posmask;
 	}
 	unsigned long long int negmask = ~posmask;
-	//printlongbits(posmask);
-	//printlongbits(negmask);
+	printlongbits(posmask);
+	printlongbits(negmask);
 	
-	int H [m][n];
-	int V [m][n];
+	int H [m+1][n+1];
+	int V [m+1][n+1];
 	
 	H[0][1] = 0;
 	V[1][0] = 0;
@@ -58,7 +88,7 @@ int lcslength(std::string X, std::string Y){
 		std::cout<<"k: "<<k<<"\n";
 		//length of the diagonal
 		int l = min(n,k-1) + min(m,k-1) - k + 1;
-		std::cout<<"l: "<<l<<"\n";
+		// std::cout<<"l: "<<l<<"\n";
 		//relevant substring index for Y
 		int j1 = k - min(m,k-1);
 		int j2 = min(n,k);
@@ -71,18 +101,20 @@ int lcslength(std::string X, std::string Y){
 		int s = ceil(double(l*f)/double(w)); //words needed to load diagonal
 		
 		int t;
-		std::cout<<"s: "<<s<<"\n";
+		//std::cout<<"s: "<<s<<"\n";
 		for(t=1;t<=s;t++){
 			//int jp = min(j+s-1,j2);
 			int jp = min(j2,t*cpw);
 			//int ip = max(i+s-1,i1);
 			int ip = max(i1,i2-(t*cpw));
+			std::cout<<"t: "<<t<<"\n";
 			 std::cout<<"i: "<<i<<"\n";
-			std::cout<<"i+s-1: "<<i+s-1<<"\n";
-			std::cout<<"i2: "<<i2<<"\n";
-			  std::cout<<"t: "<<t<<"\n";
+			 std::cout<<"ip: "<<ip<<"\n";
+			std::cout<<"j: "<<j<<"\n";
+			std::cout<<"jp: "<<jp<<"\n";
+			  
 			 
-			  std::cout<<"ip: "<<ip<<"\n";
+			  
 			long long int wy=0;
 			long long int wx=0;
 			//pack wy 
@@ -90,8 +122,8 @@ int lcslength(std::string X, std::string Y){
 			std::cout<<"\n wy: ";
 			//std::cout<<Y.at(c-1)<<"\n";
 			for(c =j; c<=jp; c++){
-				wy = wy<<f | Y.at(c-1);
-				std::cout<<Y.at(c-1);
+				wy = wy<<f | Y.at(c);
+				std::cout<<Y.at(c);
 				//i++;
 			}
 			std::cout<<"\n";
@@ -100,12 +132,14 @@ int lcslength(std::string X, std::string Y){
 			std::cout<<"\n wx: ";
 			//std::cout<<X.at(c-1)<<"\n";
 			for(c = i; c>=ip; c--){
-				wx = wx<<f | X.at(c-1);
-				std::cout<<X.at(c-1);
+				wx = wx<<f | X.at(c);
+				std::cout<<X.at(c);
 			}
 			   std::cout<<"\n";
 			//std::cout<<"\n wx: ";
-			printlongbits(wx);                                                 
+			printlongbits(wx); 
+			
+			                                                
 			i = ip+1;
 			j = jp+1;
 		}
