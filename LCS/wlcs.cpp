@@ -49,6 +49,10 @@ unsigned long long int equals(unsigned long long int wx,unsigned long long int w
 	ans = ans>>f-1;
 	return ans;
 }
+
+
+
+
 int lcslength(std::string X, std::string Y){
 	int w = 64; //block size, not UW.
 	//std::string X = "*";
@@ -138,6 +142,24 @@ int lcslength(std::string X, std::string Y){
 			   std::cout<<"\n";
 			//std::cout<<"\n wx: ";
 			printlongbits(wx); 
+			unsigned long long int hkm1 = 0; // H horizontal k-1
+			unsigned long long int vkm1 = 0; // V horizontal k-1
+			int ic = i-1;
+			int jc = j; //counters
+			while(ic>= ip-1 & jc<=jp){
+				hkm1 = hkm1<<f | H[ic][jc];
+				ic--;
+				jc++;
+			}
+			ic = i; 
+			jc = j-1;
+			while(ic>= ip & jc<=jp-1){
+				vkm1 = vkm1<<f | V[ic][jc];
+				ic--;
+				jc++;
+			}
+			
+			unsigned long long int weq = equals(wx,wy,posmask,f);
 			
 			                                                
 			i = ip+1;
