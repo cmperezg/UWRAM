@@ -5,12 +5,16 @@
 
 
   
-static const int num_threads = 4;
+static const int num_threads = 8;
   
 //This function will be called from a thread
   
 void call_from_thread(int tid) {
 	std::cout << "Launched by thread " << tid << std::endl;
+	for(int i=0; i<1000000000; i++){
+		int j = i+i*i;
+	}
+	std::cout<<"thread " << tid << " finished" << std::endl;
 }
  
 int main() {
