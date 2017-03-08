@@ -18,14 +18,25 @@ void call_from_thread(int tid) {
 	std::cout<<"thread " << tid << " finished" << std::endl;
 }
 
+std::list
+
 //parallel bmh (disjoint). splits text evenly over cores with an overlap of pattern length -1
 //each segment is processed separately by function bmh_t
 std::list<int> parbmh(std::string text, std::string pat){
 	std::list<int> res;
 	int strlen = text.size();
+	int patlen = pat.size();
 	std::list<std::string> chunks;
-	int chunksize = floor((float)strlen/(float)cores)
+	int chunksize = strlen/cores;
+	int start = 0;
+	int end = chunksize;
 	for(int c = 0; c<cores; c++){
+		chunks.push_back(text.substr(start,chunksize);
+		start = end - (patlen-1);
+		if(c==0){
+			chunksize = chunksize + (patlen-1);
+		}
+		end = start + chunksize;
 	}
 	return res;
 }
